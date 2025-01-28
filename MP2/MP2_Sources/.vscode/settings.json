@@ -1,0 +1,12 @@
+{
+  "files.associations": {
+    "cont_frame_pool.C": "cpp",
+    "simple_frame_pool.C": "cpp",
+    "assert.C": "cpp",
+    "console.C": "cpp",
+    "kernel.C": "cpp",
+    "machine.C": "cpp",
+    "utils.C": "cpp",
+    "frame_list.C": "cpp"
+  }
+}
