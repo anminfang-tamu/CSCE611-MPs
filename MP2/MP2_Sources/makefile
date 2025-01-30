@@ -54,13 +54,16 @@ console.o: console.C console.H
 cont_frame_pool.o: cont_frame_pool.C cont_frame_pool.H
 	$(GCC) $(GCC_OPTIONS) -c -o cont_frame_pool.o cont_frame_pool.C
 
+frame_list.o: frame_list.C frame_list.H
+	$(GCC) $(GCC_OPTIONS) -c -o frame_list.o frame_list.C
+
 # ==== KERNEL MAIN FILE =====
 
 kernel.o: kernel.C console.H 
 	$(GCC) $(GCC_OPTIONS) -c -o kernel.o kernel.C
-
+	
 kernel.bin: start.o utils.o kernel.o assert.o console.o \
-   cont_frame_pool.o machine.o machine_low.o  
+   cont_frame_pool.o frame_list.o machine.o machine_low.o  
 	$(LD) -melf_i386 -T linker.ld -o kernel.bin start.o utils.o \
    kernel.o assert.o console.o \
-   cont_frame_pool.o  machine.o machine_low.o 
+   cont_frame_pool.o frame_list.o machine.o machine_low.o 

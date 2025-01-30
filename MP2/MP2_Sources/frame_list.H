@@ -1,13 +1,11 @@
 #ifndef _FRAME_LIST_H_
 #define _FRAME_LIST_H_
 
-#include "machine.H" // For PAGE_SIZE
+#include "machine.H"
 
 class FrameList
 {
-private:
-    static const unsigned int FRAME_SIZE = Machine::PAGE_SIZE;
-
+public:
     struct FreeBlock
     {
         unsigned long start;
@@ -15,13 +13,18 @@ private:
         FreeBlock *next;
     };
 
-    FreeBlock *head;
+    // Default constructor: no free blocks
+    FrameList() : head(nullptr) {}
 
-public:
-    void init(unsigned long start, unsigned long length);
+    void init_managed_region(unsigned long start, unsigned long length, void *storage);
     unsigned long allocate(unsigned long n_frames);
     void release(unsigned long start, unsigned long length);
     void mark_unavailable(unsigned long start, unsigned long length);
+
+private:
+    static const unsigned int FRAME_SIZE = Machine::PAGE_SIZE;
+
+    FreeBlock *head;
 };
 
 #endif

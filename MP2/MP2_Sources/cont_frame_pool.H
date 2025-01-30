@@ -27,6 +27,7 @@
 /*--------------------------------------------------------------------------*/
 
 #include "machine.H"
+#include "frame_list.H"
 
 /*--------------------------------------------------------------------------*/
 /* DATA STRUCTURES */
@@ -43,10 +44,27 @@ class ContFramePool
 
 private:
   /* -- DEFINE YOUR CONT FRAME POOL DATA STRUCTURE(s) HERE. */
+  // Structure to track allocated frames and their sizes
+  struct AllocatedBlock
+  {
+    unsigned long frame_no;
+    unsigned int length;
+    AllocatedBlock *next;
+  };
+
   FrameList free_list;
+
   unsigned long base_frame_no;
   unsigned long nframes;
   unsigned long info_frame_no;
+
+  // Add pointer for pool list
+  ContFramePool *next_pool;
+  static ContFramePool *first_pool; // Head of pool list
+
+  AllocatedBlock *allocated_blocks;
+
+  unsigned long allocated_block_offset;
 
   /* ---- STATE MANAGEMENT */
 

@@ -11,13 +11,12 @@
 
 */
 
-
 /*--------------------------------------------------------------------------*/
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-#define MB * (0x1 << 20)
-#define KB * (0x1 << 10)
+#define MB *(0x1 << 20)
+#define KB *(0x1 << 10)
 /* Makes things easy to read */
 
 #define KERNEL_POOL_START_FRAME ((2 MB) / (4 KB))
@@ -43,23 +42,25 @@
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
 
-#include "machine.H"     /* LOW-LEVEL STUFF   */
+#include "machine.H" /* LOW-LEVEL STUFF   */
 #include "console.H"
 
 #include "assert.H"
-#include "cont_frame_pool.H"  /* The physical memory manager */
+#include "cont_frame_pool.H" /* The physical memory manager */
 
 /*--------------------------------------------------------------------------*/
 /* FORWARDS */
 /*--------------------------------------------------------------------------*/
 
-void test_memory(ContFramePool * _pool, unsigned int _allocs_to_go);
-
+void test_memory(ContFramePool *_pool, unsigned int _allocs_to_go);
+void failed_test_frame_pool();
+void successful_test_frame_pool();
 /*--------------------------------------------------------------------------*/
 /* MAIN ENTRY INTO THE OS */
 /*--------------------------------------------------------------------------*/
 
-int main() {
+int main()
+{
 
     Console::init();
     Console::redirect_output(true); // comment if you want to stop redirecting qemu window output to stdout
@@ -67,70 +68,117 @@ int main() {
     /* -- INITIALIZE FRAME POOLS -- */
 
     /* ---- KERNEL POOL -- */
-    
+
     ContFramePool kernel_mem_pool(KERNEL_POOL_START_FRAME,
                                   KERNEL_POOL_SIZE,
                                   0);
-    
+
     /* ---- PROCESS POOL -- */
 
-/*  // In later machine problems, we will be using two pools. You may want to comment this out and test 
-    // the management of two pools.
+    /*  // In later machine problems, we will be using two pools. You may want to comment this out and test
+        // the management of two pools.
 
-    unsigned long n_info_frames = ContFramePool::needed_info_frames(PROCESS_POOL_SIZE);
+        unsigned long n_info_frames = ContFramePool::needed_info_frames(PROCESS_POOL_SIZE);
 
-    unsigned long process_mem_pool_info_frame = kernel_mem_pool.get_frames(n_info_frames);
-    
-    ContFramePool process_mem_pool(PROCESS_POOL_START_FRAME,
-                                   PROCESS_POOL_SIZE,
-                                   process_mem_pool_info_frame);
-    
-    process_mem_pool.mark_inaccessible(MEM_HOLE_START_FRAME, MEM_HOLE_SIZE);
-*/
+        unsigned long process_mem_pool_info_frame = kernel_mem_pool.get_frames(n_info_frames);
+
+        ContFramePool process_mem_pool(PROCESS_POOL_START_FRAME,
+                                       PROCESS_POOL_SIZE,
+                                       process_mem_pool_info_frame);
+
+        process_mem_pool.mark_inaccessible(MEM_HOLE_START_FRAME, MEM_HOLE_SIZE);
+    */
 
     /* -- MOST OF WHAT WE NEED IS SETUP. THE KERNEL CAN START. */
 
     Console::puts("Hello World!\n");
 
     /* -- TEST MEMORY ALLOCATOR */
-    
+
     test_memory(&kernel_mem_pool, N_TEST_ALLOCATIONS);
 
     /* ---- Add code here to test the frame pool implementation. */
-    
+
     /* -- NOW LOOP FOREVER */
     Console::puts("Testing is DONE. We will do nothing forever\n");
     Console::puts("Feel free to turn off the machine now.\n");
+    Console::puts("==============================================\n");
 
-    for(;;);
+    failed_test_frame_pool();
+    successful_test_frame_pool();
+
+    for (;;)
+        ;
 
     /* -- WE DO THE FOLLOWING TO KEEP THE COMPILER HAPPY. */
     return 1;
 }
 
-void test_memory(ContFramePool * _pool, unsigned int _allocs_to_go) {
-    Console::puts("alloc_to_go = "); Console::puti(_allocs_to_go); Console::puts("\n");
-    if (_allocs_to_go > 0) {
-        // We have not reached the end yet. 
-        int n_frames = _allocs_to_go % 4 + 1;               // number of frames you want to allocate
-        unsigned long frame = _pool->get_frames(n_frames);  // we allocate the frames from the pool
-        int * value_array = (int*)(frame * (4 KB));         // we pick a unique number that we want to write into the memory we just allocated
-        for (int i = 0; i < (1 KB) * n_frames; i++) {       // we write this value int the memory locations
+void test_memory(ContFramePool *_pool, unsigned int _allocs_to_go)
+{
+    Console::puts("alloc_to_go = ");
+    Console::puti(_allocs_to_go);
+    Console::puts("\n");
+    if (_allocs_to_go > 0)
+    {
+        // We have not reached the end yet.
+        int n_frames = _allocs_to_go % 4 + 1;              // number of frames you want to allocate
+        unsigned long frame = _pool->get_frames(n_frames); // we allocate the frames from the pool
+        int *value_array = (int *)(frame * (4 KB));        // we pick a unique number that we want to write into the memory we just allocated
+        for (int i = 0; i < (1 KB) * n_frames; i++)
+        { // we write this value int the memory locations
             value_array[i] = _allocs_to_go;
         }
-        test_memory(_pool, _allocs_to_go - 1);              // recursively allocate and uniquely mark more memory
-        for (int i = 0; i < (1 KB) * n_frames; i++) {       // We check the values written into the memory before we recursed 
-            if(value_array[i] != _allocs_to_go){            // If the value stored in the memory locations is not the same that we wrote a few lines above
-                                                            // then somebody overwrote the memory.
+        test_memory(_pool, _allocs_to_go - 1); // recursively allocate and uniquely mark more memory
+        for (int i = 0; i < (1 KB) * n_frames; i++)
+        { // We check the values written into the memory before we recursed
+            if (value_array[i] != _allocs_to_go)
+            { // If the value stored in the memory locations is not the same that we wrote a few lines above
+              // then somebody overwrote the memory.
                 Console::puts("MEMORY TEST FAILED. ERROR IN FRAME POOL\n");
-                Console::puts("i ="); Console::puti(i);
-                Console::puts("   v = "); Console::puti(value_array[i]); 
-                Console::puts("   n ="); Console::puti(_allocs_to_go);
+                Console::puts("i =");
+                Console::puti(i);
+                Console::puts("   v = ");
+                Console::puti(value_array[i]);
+                Console::puts("   n =");
+                Console::puti(_allocs_to_go);
                 Console::puts("\n");
-                for(;;);                                    // We throw a fit.
+                for (;;)
+                    ; // We throw a fit.
             }
         }
-        ContFramePool::release_frames(frame);               // We free the memory that we allocated above.
+        ContFramePool::release_frames(frame);
     }
 }
 
+// Failed test case for frame pool
+void failed_test_frame_pool()
+{
+    Console::puts("Failed test case for frame pool\n");
+    ContFramePool frame_pool(0, 10, 0);
+    frame_pool.mark_inaccessible(0, 10);
+    Console::puts("frame_pool.get_frames(1) returned: ");
+    Console::puti(frame_pool.get_frames(1));
+    Console::puts("\n");
+    frame_pool.release_frames(0);
+    Console::puts("==============================================\n");
+}
+
+// Successful test case for frame pool
+void successful_test_frame_pool()
+{
+    Console::puts("Successful test case for frame pool\n");
+
+    ContFramePool frame_pool(10, 10, 0);
+    frame_pool.mark_inaccessible(10, 5);
+
+    Console::puts("frame_pool.get_frames(1) returned: ");
+    unsigned long frame = frame_pool.get_frames(1); // Should succeed, using frame 15-19
+    Console::puti(frame);
+    Console::puts("\n");
+    if (frame != 0)
+    {
+        frame_pool.release_frames(frame);
+    }
+    Console::puts("==============================================\n");
+}
