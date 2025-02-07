@@ -55,6 +55,10 @@
 void test_memory(ContFramePool *_pool, unsigned int _allocs_to_go);
 void failed_test_frame_pool();
 void successful_test_frame_pool();
+void test_fragmentation(ContFramePool *pool);
+void test_small_allocations(ContFramePool *pool);
+void test_medium_allocations(ContFramePool *pool);
+void test_sequential_allocation(ContFramePool *pool);
 /*--------------------------------------------------------------------------*/
 /* MAIN ENTRY INTO THE OS */
 /*--------------------------------------------------------------------------*/
@@ -104,8 +108,13 @@ int main()
     Console::puts("Feel free to turn off the machine now.\n");
     Console::puts("==============================================\n");
 
+    // Additional tests
     failed_test_frame_pool();
     successful_test_frame_pool();
+    test_fragmentation(&kernel_mem_pool);
+    test_small_allocations(&kernel_mem_pool);
+    test_medium_allocations(&kernel_mem_pool);
+    test_sequential_allocation(&kernel_mem_pool);
 
     for (;;)
         ;
@@ -180,5 +189,168 @@ void successful_test_frame_pool()
     {
         frame_pool.release_frames(frame);
     }
+    Console::puts("==============================================\n");
+}
+
+void test_fragmentation(ContFramePool *pool)
+{
+    Console::puts("\nTesting fragmentation scenarios:\n");
+
+    // Allocate multiple small chunks
+    unsigned long frames[5];
+    for (int i = 0; i < 5; i++)
+    {
+        frames[i] = pool->get_frames(2); // Allocate 2 frames each time
+        Console::puts("Allocated 2 frames at: ");
+        Console::puti(frames[i]);
+        Console::puts("\n");
+    }
+
+    // Release alternate frames to create fragmentation
+    for (int i = 0; i < 5; i += 2)
+    {
+        ContFramePool::release_frames(frames[i]);
+        Console::puts("Released frames at: ");
+        Console::puti(frames[i]);
+        Console::puts("\n");
+    }
+
+    // Try to allocate a larger chunk
+    Console::puts("Attempting to allocate 4 contiguous frames: ");
+    unsigned long large_frame = pool->get_frames(4);
+    if (large_frame == 0)
+    {
+        Console::puts("Failed due to fragmentation (expected)\n");
+    }
+    else
+    {
+        Console::puts("Succeeded at: ");
+        Console::puti(large_frame);
+        Console::puts("\n");
+        ContFramePool::release_frames(large_frame);
+    }
+
+    // Clean up remaining allocations
+    for (int i = 1; i < 5; i += 2)
+    {
+        ContFramePool::release_frames(frames[i]);
+    }
+    Console::puts("==============================================\n");
+}
+
+void test_small_allocations(ContFramePool *pool)
+{
+    Console::puts("\nTesting small allocations:\n");
+
+    // Test single frame allocations
+    Console::puts("Testing single frame allocations:\n");
+    unsigned long frames[3];
+
+    // Allocation phase
+    for (int i = 0; i < 3; i++)
+    {
+        frames[i] = pool->get_frames(1);
+        Console::puts("Allocated frame at: ");
+        Console::puti(frames[i]);
+        Console::puts("\n");
+
+        // Verify frame is within expected range
+        if (frames[i] < KERNEL_POOL_START_FRAME ||
+            frames[i] >= (KERNEL_POOL_START_FRAME + KERNEL_POOL_SIZE))
+        {
+            Console::puts("ERROR: Frame outside valid range!\n");
+        }
+    }
+
+    // Verify sequential allocation
+    for (int i = 1; i < 3; i++)
+    {
+        if (frames[i] != frames[i - 1] + 1)
+        {
+            Console::puts("ERROR: Frames not sequential!\n");
+        }
+    }
+
+    // Release phase
+    for (int i = 0; i < 3; i++)
+    {
+        Console::puts("Releasing frame: ");
+        Console::puti(frames[i]);
+        Console::puts("\n");
+        ContFramePool::release_frames(frames[i]);
+    }
+
+    // Reallocation test
+    unsigned long new_frame = pool->get_frames(1);
+    Console::puts("Reallocated frame at: ");
+    Console::puti(new_frame);
+    Console::puts("\n");
+
+    // Verify reallocation uses a previously freed frame
+    bool found_match = false;
+    for (int i = 0; i < 3; i++)
+    {
+        if (new_frame == frames[i])
+        {
+            found_match = true;
+            break;
+        }
+    }
+    if (!found_match)
+    {
+        Console::puts("WARNING: Reallocated frame was not one of the previously freed frames\n");
+    }
+
+    ContFramePool::release_frames(new_frame);
+    Console::puts("==============================================\n");
+}
+
+void test_medium_allocations(ContFramePool *pool)
+{
+    Console::puts("\nTesting medium allocations:\n");
+
+    // Try to allocate half of available frames
+    unsigned int half_size = KERNEL_POOL_SIZE / 2;
+    Console::puts("Attempting to allocate ");
+    Console::puti(half_size);
+    Console::puts(" frames: ");
+
+    unsigned long half_frames = pool->get_frames(half_size);
+    if (half_frames != 0)
+    {
+        Console::puts("Success at frame: ");
+        Console::puti(half_frames);
+        Console::puts("\n");
+        ContFramePool::release_frames(half_frames);
+    }
+    else
+    {
+        Console::puts("Failed\n");
+    }
+    Console::puts("==============================================\n");
+}
+
+void test_sequential_allocation(ContFramePool *pool)
+{
+    Console::puts("\nTesting sequential allocations:\n");
+
+    // Allocate 3 frames sequentially
+    unsigned long frame1 = pool->get_frames(1);
+    unsigned long frame2 = pool->get_frames(1);
+    unsigned long frame3 = pool->get_frames(1);
+
+    Console::puts("Sequential frames: ");
+    Console::puti(frame1);
+    Console::puts(", ");
+    Console::puti(frame2);
+    Console::puts(", ");
+    Console::puti(frame3);
+    Console::puts("\n");
+
+    // Release in reverse order
+    ContFramePool::release_frames(frame3);
+    ContFramePool::release_frames(frame2);
+    ContFramePool::release_frames(frame1);
+
     Console::puts("==============================================\n");
 }
