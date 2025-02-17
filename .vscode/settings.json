@@ -8,6 +8,7 @@
     "simple_frame_pool.C": "cpp",
     "assert.C": "cpp",
     "simple_console.C": "cpp",
-    "machine.C": "cpp"
+    "machine.C": "cpp",
+    "page_table.C": "cpp"
   }
 }
