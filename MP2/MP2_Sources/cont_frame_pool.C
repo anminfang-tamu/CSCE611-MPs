@@ -154,13 +154,17 @@ ContFramePool::ContFramePool(unsigned long _base_frame_no,
     // Step 1: figure out how many frames are needed for metadata
     unsigned long needed = needed_info_frames(nframes);
 
+    Console::puts("needed: ");
+    Console::puti(needed);
+    Console::puts("\n");
+
     // Step 2: decide where to place the info frames in the pool
-    unsigned long info_start; // We'll store the first metadata frame
+    unsigned long info_start;
     if (info_frame_no == 0)
     {
-        // Step 3: We place the metadata frames at the front
+        // Step 3: place the metadata frames at the front
         info_start = base_frame_no;
-        // Step 4: Then remove those frames from the "real" pool
+        // Step 4: remove those frames from the "real" pool
         base_frame_no += needed;
         nframes -= needed;
     }

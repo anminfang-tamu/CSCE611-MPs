@@ -75,11 +75,11 @@ void FrameList::release(unsigned long start, unsigned long length)
         curr = curr->next;
     }
 
-    // Step 2: try to merge with prev
+    // Step 2: try to merge with prev (case 1)
     if (prev && (prev->start + prev->length == start))
     {
         prev->length += length; // merged
-        // Step 3: try to merge with curr
+        // Step 3: try to merge with curr (case 2)
         if (curr && (prev->start + prev->length == curr->start))
         {
             prev->length += curr->length;
@@ -88,7 +88,7 @@ void FrameList::release(unsigned long start, unsigned long length)
         return;
     }
 
-    // Step 4: try to merge with curr
+    // Step 4: try to merge with curr (case 2)
     if (curr && (start + length == curr->start))
     {
         // Step 5: build a block merged with curr
@@ -102,7 +102,7 @@ void FrameList::release(unsigned long start, unsigned long length)
         return;
     }
 
-    // Step 7: otherwise just insert a new block
+    // Step 7: otherwise just insert a new block (case 3)
     FreeBlock *newb = get_free_block(temp);
     if (prev)
     {
