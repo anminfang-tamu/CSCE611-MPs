@@ -79,11 +79,8 @@ paging_low.o: paging_low.asm paging_low.H
 page_table.o: page_table.C page_table.H paging_low.H
 	$(GCC) $(GCC_OPTIONS) -c -o page_table.o page_table.C
 
-cont_frame_pool.o: cont_frame_pool.C cont_frame_pool.H
-	$(GCC) $(GCC_OPTIONS) -c -o cont_frame_pool.o cont_frame_pool.C
-
-frame_list.o: frame_list.C frame_list.H
-	$(GCC) $(GCC_OPTIONS) -c -o frame_list.o frame_list.C
+# cont_frame_pool.o: cont_frame_pool.C cont_frame_pool.H
+# 	$(GCC) $(GCC_OPTIONS) -c -o cont_frame_pool.o cont_frame_pool.C
 
 # ==== KERNEL MAIN FILE =====
 
@@ -91,9 +88,9 @@ kernel.o: kernel.C console.H simple_timer.H page_table.H
 	$(GCC) $(GCC_OPTIONS) -c -o kernel.o kernel.C
 
 kernel.bin: start.o utils.o kernel.o assert.o console.o gdt.o idt.o irq.o exceptions.o \
-   interrupts.o simple_timer.o paging_low.o page_table.o cont_frame_pool.o frame_list.o machine.o \
+   interrupts.o simple_timer.o paging_low.o page_table.o cont_frame_pool.o machine.o \
    machine_low.o 
 	$(LD) -melf_i386 -T linker.ld -o kernel.bin start.o utils.o kernel.o assert.o console.o \
    gdt.o idt.o irq.o exceptions.o \
-   interrupts.o simple_timer.o paging_low.o page_table.o cont_frame_pool.o frame_list.o machine.o \
+   interrupts.o simple_timer.o paging_low.o page_table.o cont_frame_pool.o machine.o \
    machine_low.o
