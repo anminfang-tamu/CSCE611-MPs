@@ -9,6 +9,12 @@
     "assert.C": "cpp",
     "simple_console.C": "cpp",
     "machine.C": "cpp",
-    "page_table.C": "cpp"
+    "page_table.C": "cpp",
+    "simple_timer.C": "cpp",
+    "idt.C": "cpp",
+    "exceptions.C": "cpp",
+    "interrupts.C": "cpp",
+    "gdt.C": "cpp",
+    "irq.C": "cpp"
   }
 }

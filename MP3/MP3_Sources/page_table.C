@@ -82,8 +82,7 @@ void PageTable::enable_paging()
    if (!paging_enabled)
    {
       unsigned long cr0 = read_cr0();
-      cr0 |= 0x80000000; // Set the paging bit (PG)
-      // cr0 |= 0x00000001; // Set the protection enable bit (PE)
+      cr0 |= 0x80000000; // set the paging bit (PG)
       write_cr0(cr0);
       paging_enabled = 1;
    }
@@ -144,10 +143,10 @@ void PageTable::handle_fault(REGS *_r)
    // page table entry not exist
    if (!(page_table[page_table_idx] & 0x1))
    {
-      // Get a frame for the page
+      // get a frame for the page
       unsigned long frame = process_mem_pool->get_frames(1);
 
-      // Update the page table entry
+      // update the page table entry
       page_table[page_table_idx] = (frame * PAGE_SIZE) | 0x3;
    }
 
