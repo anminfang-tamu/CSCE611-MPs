@@ -1,14 +1,15 @@
 /*
-    File: page_table.H
+ File: page_table.H
 
-    Author: R. Bettati
-            Department of Computer Science
-            Texas A&M University
-    Date  : 16/12/07
+ Author: R. Bettati
+ Department of Computer Science
+ Texas A&M University
+ Date  : 17/12/07
+ Update: 21/10/13
 
-    Description: Basic Paging.
+ Description: Basic Paging.
 
-*/
+ */
 
 #ifndef _page_table_H_ // include file only once
 #define _page_table_H_
@@ -16,8 +17,7 @@
 /*--------------------------------------------------------------------------*/
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
-
-/* -- (none) -- */
+#define MAX_POOLS 16
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
@@ -31,7 +31,9 @@
 /* FORWARDS */
 /*--------------------------------------------------------------------------*/
 
-/* -- (none) -- */
+/* Forward declaration of class VMPool */
+/* We need this to break a circular include sequence. */
+class VMPool;
 
 /*--------------------------------------------------------------------------*/
 /* P A G E - T A B L E  */
@@ -48,14 +50,17 @@ private:
    static ContFramePool *process_mem_pool; /* Frame pool for the process memory */
    static unsigned long shared_size;       /* size of shared address space */
 
+   static VMPool *registered_pools[MAX_POOLS];
+   static unsigned int num_registered_pools;
+
    /* DATA FOR CURRENT PAGE TABLE */
    unsigned long *page_directory; /* where is page directory located? */
 
 public:
-   static const unsigned int PAGE_SIZE = Machine::PAGE_SIZE; // 4KB
+   static const unsigned int PAGE_SIZE = Machine::PAGE_SIZE;
    /* in bytes */
-   static const unsigned int ENTRIES_PER_PAGE = Machine::PT_ENTRIES_PER_PAGE; // 1024
-   /* in entries, duh! */
+   static const unsigned int ENTRIES_PER_PAGE = Machine::PT_ENTRIES_PER_PAGE;
+   /* in entries */
 
    static void init_paging(ContFramePool *_kernel_mem_pool,
                            ContFramePool *_process_mem_pool,
@@ -64,26 +69,40 @@ public:
 
    PageTable();
    /* Initializes a page table with a given location for the directory and the
-      page table proper.
-      NOTE: The PageTable object still needs to be stored somewhere!
-      Probably it is best to have it on the stack, as there is no
-      memory manager yet...
-      NOTE2: It may also be simpler to create the first page table *before*
-      paging has been enabled.
-   */
+    page table proper.
+    NOTE: The PageTable object still needs to be stored somewhere!
+    Probably it is best to have it on the stack, as there is no
+    memory manager yet...
+    NOTE2: It may also be simpler to create the first page table *before*
+    paging has been enabled.
+    */
 
    void load();
    /* Makes the given page table the current table. This must be done once during
-      system startup and whenever the address space is switched (e.g. during
-      process switching). */
+    system startup and whenever the address space is switched (e.g. during
+    process switching). */
 
    static void enable_paging();
    /* Enable paging on the CPU. Typically, a CPU start with paging disabled, and
-      memory is accessed by addressing physical memory directly. After paging is
-      enabled, memory is addressed logically. */
+    memory is accessed by addressing physical memory directly. After paging is
+    enabled, memory is addressed logically. */
 
    static void handle_fault(REGS *_r);
    /* The page fault handler. */
+
+   // -- NEW IN MP4
+
+   void register_pool(VMPool *_vm_pool);
+   /* Register a virtual memory pool with the page table. */
+
+   void free_page(unsigned long _page_no);
+   /* If page is valid, release frame and mark page invalid. */
+
+   unsigned long *PDE_address(unsigned long addr);
+
+   unsigned long *PTE_address(unsigned long addr);
+
+   void flush_tlb();
 };
 
 #endif

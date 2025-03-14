@@ -3,12 +3,16 @@
 #include "console.H"
 #include "paging_low.H"
 #include "page_table.H"
+#include "vm_pool.H"
 
 PageTable *PageTable::current_page_table = nullptr;
 unsigned int PageTable::paging_enabled = 0;
 ContFramePool *PageTable::kernel_mem_pool = nullptr;
 ContFramePool *PageTable::process_mem_pool = nullptr;
 unsigned long PageTable::shared_size = 0;
+
+VMPool *PageTable::registered_pools[MAX_POOLS];
+unsigned int PageTable::num_registered_pools = 0;
 
 void PageTable::init_paging(ContFramePool *_kernel_mem_pool,
                             ContFramePool *_process_mem_pool,
@@ -65,6 +69,9 @@ PageTable::PageTable()
          }
       }
    }
+
+   // Recursive mapping: last entry points to the page directory itself
+   page_directory[ENTRIES_PER_PAGE - 1] = (unsigned long)page_directory_frame * PAGE_SIZE | 0x3;
 
    Console::puts("============== Page Table created. ==============\n");
 }
@@ -149,6 +156,58 @@ void PageTable::handle_fault(REGS *_r)
       // update the page table entry
       page_table[page_table_idx] = (frame * PAGE_SIZE) | 0x3;
    }
+   /*
+      bool legitimate = false;
+      for (unsigned int i = 0; i < num_registered_pools; i++)
+      {
+         if (registered_pools[i]->is_legitimate(fault_addr))
+         {
+            legitimate = true;
+            break;
+         }
+      }
 
+      if (!legitimate)
+      {
+         Console::puts("Segmentation fault: invalid memory access!\n");
+         assert(false);
+      }
+   */
    Console::puts("============== Page fault handled. ==============\n");
+}
+
+unsigned long *PageTable::PDE_address(unsigned long addr)
+{
+   return (unsigned long *)(0xFFFFF000 | ((addr >> 20) & 0xFFC));
+}
+
+unsigned long *PageTable::PTE_address(unsigned long addr)
+{
+   return (unsigned long *)(0xFFC00000 | ((addr >> 10) & 0x3FF000) | ((addr >> 10) & 0xFFC));
+}
+
+void PageTable::flush_tlb()
+{
+   write_cr3(read_cr3());
+}
+
+void PageTable::register_pool(VMPool *pool)
+{
+   assert(num_registered_pools < MAX_POOLS);
+   registered_pools[num_registered_pools++] = pool;
+}
+
+void PageTable::free_page(unsigned long page_no)
+{
+   unsigned long addr = page_no * PAGE_SIZE;
+   unsigned long *pte = PTE_address(addr);
+
+   if (*pte & 0x1)
+   { // page is valid
+      unsigned long frame = (*pte & 0xFFFFF000) / PAGE_SIZE;
+      process_mem_pool->release_frames(frame);
+      *pte = 0x2; // mark page as invalid
+   }
+
+   flush_tlb();
 }
