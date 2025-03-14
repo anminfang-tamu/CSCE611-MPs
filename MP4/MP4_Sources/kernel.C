@@ -11,14 +11,13 @@
 
 */
 
-
 /*--------------------------------------------------------------------------*/
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-#define GB * (0x1 << 30)
-#define MB * (0x1 << 20)
-#define KB * (0x1 << 10)
+#define GB *(0x1 << 30)
+#define MB *(0x1 << 20)
+#define KB *(0x1 << 10)
 #define KERNEL_POOL_START_FRAME ((2 MB) / Machine::PAGE_SIZE)
 #define KERNEL_POOL_SIZE ((2 MB) / Machine::PAGE_SIZE)
 #define PROCESS_POOL_START_FRAME ((4 MB) / Machine::PAGE_SIZE)
@@ -31,7 +30,7 @@
 
 #define FAULT_ADDR (4 MB)
 /* used in the code later as address referenced to cause page faults. */
-//#define NACCESS ((1 MB) / 4)
+// #define NACCESS ((1 MB) / 4)
 #define NACCESS (2 KB)
 /* NACCESS integer access (i.e. 4 bytes in each access) are made starting at address FAULT_ADDR */
 
@@ -39,15 +38,15 @@
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
 
-#include "machine.H"        /* LOW-LEVEL STUFF */
+#include "machine.H" /* LOW-LEVEL STUFF */
 #include "console.H"
 #include "gdt.H"
-#include "idt.H"            /* LOW-LEVEL EXCEPTION MGMT. */
+#include "idt.H" /* LOW-LEVEL EXCEPTION MGMT. */
 #include "irq.H"
 #include "exceptions.H"
 #include "interrupts.H"
 
-#include "simple_timer.H"   /* SIMPLE TIMER MANAGEMENT */
+#include "simple_timer.H" /* SIMPLE TIMER MANAGEMENT */
 
 #include "page_table.H"
 #include "paging_low.H"
@@ -62,7 +61,7 @@ void TestPassed();
 void TestFailed();
 
 void GeneratePageTableMemoryReferences(unsigned long start_address, int n_references);
-void GenerateVMPoolMemoryReferences(VMPool* pool, int size1, int size2);
+void GenerateVMPoolMemoryReferences(VMPool *pool, int size1, int size2);
 
 /*--------------------------------------------------------------------------*/
 /* MEMORY ALLOCATION */
@@ -70,32 +69,32 @@ void GenerateVMPoolMemoryReferences(VMPool* pool, int size1, int size2);
 
 // Here we overload the new and delete operators to use our vmpools!
 
-VMPool* current_pool;
+VMPool *current_pool;
 
 typedef unsigned int size_t;
 
-//replace the operator "new"
-void* operator new (size_t size)
+// replace the operator "new"
+void *operator new(size_t size)
 {
 	unsigned long a = current_pool->allocate((unsigned long)size);
-	return (void*)a;
+	return (void *)a;
 }
 
-//replace the operator "new[]"
-void* operator new[](size_t size)
+// replace the operator "new[]"
+void *operator new[](size_t size)
 {
 	unsigned long a = current_pool->allocate((unsigned long)size);
-	return (void*)a;
+	return (void *)a;
 }
 
-//replace the operator "delete"
-void operator delete (void* p, size_t size)
+// replace the operator "delete"
+void operator delete(void *p, size_t size)
 {
 	current_pool->release((unsigned long)p);
 }
 
-//replace the operator "delete[]"
-void operator delete[](void* p)
+// replace the operator "delete[]"
+void operator delete[](void *p)
 {
 	current_pool->release((unsigned long)p);
 }
@@ -106,12 +105,12 @@ void operator delete[](void* p)
 
 /* -- EXAMPLE OF THE DIVISION-BY-ZERO HANDLER */
 
-void dbz_handler(REGS* r)
+void dbz_handler(REGS *r)
 {
 	Console::puts("DIVISION BY ZERO\n");
-	for (;;);
+	for (;;)
+		;
 }
-
 
 /*--------------------------------------------------------------------------*/
 /* MAIN ENTRY INTO THE OS */
@@ -132,21 +131,22 @@ int main()
 
 	/* -- EXAMPLE OF AN EXCEPTION HANDLER -- */
 
-	class DBZ_Handler : public ExceptionHandler {
+	class DBZ_Handler : public ExceptionHandler
+	{
 		/* We derive Division-by-Zero handler from ExceptionHandler
 		   and overload the method handle_exception. */
 	public:
-		virtual void handle_exception(REGS* _regs)
+		virtual void handle_exception(REGS *_regs)
 		{
 			Console::puts("DIVISION BY ZERO!\n");
-			for (;;);
+			for (;;)
+				;
 		}
 	} dbz_handler;
 
 	/* Register the DBZ handler for exception no.0
 	   with the exception dispatcher. */
 	ExceptionHandler::register_handler(0, &dbz_handler);
-
 
 	/* -- INITIALIZE THE TIMER (we use a very simple timer).-- */
 
@@ -161,15 +161,15 @@ int main()
 	 It is important to install a timer handler, as we
 	 would get a lot of uncaptured interrupts otherwise. */
 
-	 /* -- ENABLE INTERRUPTS -- */
+	/* -- ENABLE INTERRUPTS -- */
 
 	Machine::enable_interrupts();
 
 	/* -- INITIALIZE FRAME POOLS -- */
 
 	ContFramePool kernel_mem_pool(KERNEL_POOL_START_FRAME,
-		KERNEL_POOL_SIZE,
-		0);
+								  KERNEL_POOL_SIZE,
+								  0);
 
 	unsigned long n_info_frames =
 		ContFramePool::needed_info_frames(PROCESS_POOL_SIZE);
@@ -178,8 +178,8 @@ int main()
 		kernel_mem_pool.get_frames(n_info_frames);
 
 	ContFramePool process_mem_pool(PROCESS_POOL_START_FRAME,
-		PROCESS_POOL_SIZE,
-		process_mem_pool_info_frame);
+								   PROCESS_POOL_SIZE,
+								   process_mem_pool_info_frame);
 
 	/* Take care of the hole in the memory. */
 	process_mem_pool.mark_inaccessible(MEM_HOLE_START_FRAME, MEM_HOLE_SIZE);
@@ -190,11 +190,12 @@ int main()
 
 	/* ---- INSTALL PAGE FAULT HANDLER -- */
 
-	class PageFault_Handler : public ExceptionHandler {
+	class PageFault_Handler : public ExceptionHandler
+	{
 		/* We derive the page fault handler from ExceptionHandler
 	   and overload the method handle_exception. */
 	public:
-		virtual void handle_exception(REGS* _regs)
+		virtual void handle_exception(REGS *_regs)
 		{
 			PageTable::handle_fault(_regs);
 		}
@@ -207,8 +208,8 @@ int main()
 	/* ---- INITIALIZE THE PAGE TABLE -- */
 
 	PageTable::init_paging(&kernel_mem_pool,
-		&process_mem_pool,
-		4 MB);
+						   &process_mem_pool,
+						   4 MB);
 
 	PageTable pt1;
 
@@ -228,16 +229,16 @@ int main()
 
 #ifdef _TEST_PAGE_TABLE_
 
-	   /* WE TEST JUST THE PAGE TABLE */
-	GeneratePageTableMemoryReferences(FAULT_ADDR, NACCESS);
+	/* WE TEST JUST THE PAGE TABLE */
+	// 	GeneratePageTableMemoryReferences(FAULT_ADDR, NACCESS);
 
-#else
+	// #else
 
-	   /* WE TEST JUST THE VM POOLS */
+	/* WE TEST JUST THE VM POOLS */
 
-	   /* -- CREATE THE VM POOLS. */
+	/* -- CREATE THE VM POOLS. */
 
-	   /* ---- We define the code pool to be a 256MB segment starting at virtual address 512MB -- */
+	/* ---- We define the code pool to be a 256MB segment starting at virtual address 512MB -- */
 	VMPool code_pool(512 MB, 256 MB, &process_mem_pool, &pt1);
 
 	/* ---- We define a 256MB heap that starts at 1GB in virtual memory. -- */
@@ -264,38 +265,48 @@ int main()
 
 void GeneratePageTableMemoryReferences(unsigned long start_address, int n_references)
 {
-	// This tests just the page table. 
-	int* foo = (int*)start_address;
+	// This tests just the page table.
+	int *foo = (int *)start_address;
 
-	for (int i = 0; i < n_references; i++) {
+	for (int i = 0; i < n_references; i++)
+	{
 		foo[i] = i;
 	}
 
 	Console::puts("DONE WRITING TO MEMORY. Now testing...\n");
 
-	for (int i = 0; i < n_references; i++) {
-		if (foo[i] != i) {
+	for (int i = 0; i < n_references; i++)
+	{
+		if (foo[i] != i)
+		{
 			TestFailed();
 		}
 	}
 }
 
-void GenerateVMPoolMemoryReferences(VMPool* pool, int size1, int size2)
+void GenerateVMPoolMemoryReferences(VMPool *pool, int size1, int size2)
 {
-	// Here we test the VMPool 
+	// Here we test the VMPool
 	current_pool = pool;
-	for (int i = 1; i < size1; i++) {
-		int* arr = new int[size2 * i];
-		if (pool->is_legitimate((unsigned long)arr) == false) {
+	for (int i = 1; i < size1; i++)
+	{
+		int *arr = new int[size2 * i];
+		if (pool->is_legitimate((unsigned long)arr) == false)
+		{
 			Console::puts("is_legitimate failed!\n");
 			TestFailed();
 		}
-		for (int j = 0; j < size2 * i; j++) {
+		for (int j = 0; j < size2 * i; j++)
+		{
 			arr[j] = j;
 		}
-		for (int j = size2 * i - 1; j >= 0; j--) {
-			if (arr[j] != j) {
-				Console::puts("     j = "); Console::puti(j); Console::puts("value check failed!\n");
+		for (int j = size2 * i - 1; j >= 0; j--)
+		{
+			if (arr[j] != j)
+			{
+				Console::puts("     j = ");
+				Console::puti(j);
+				Console::puts("value check failed!\n");
 				TestFailed();
 			}
 		}
@@ -307,12 +318,14 @@ void TestFailed()
 {
 	Console::puts("Test Failed\n");
 	Console::puts("YOU CAN TURN OFF THE MACHINE NOW.\n");
-	for (;;);
+	for (;;)
+		;
 }
 
 void TestPassed()
 {
 	Console::puts("Test Passed! Congratulations!\n");
 	Console::puts("YOU CAN SAFELY TURN OFF THE MACHINE NOW.\n");
-	for (;;);
+	for (;;)
+		;
 }
