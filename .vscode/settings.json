@@ -15,6 +15,9 @@
     "exceptions.C": "cpp",
     "interrupts.C": "cpp",
     "gdt.C": "cpp",
-    "irq.C": "cpp"
+    "irq.C": "cpp",
+    "scheduler.C": "cpp",
+    "thread.C": "cpp",
+    "rr_scheduler.C": "cpp"
   }
 }

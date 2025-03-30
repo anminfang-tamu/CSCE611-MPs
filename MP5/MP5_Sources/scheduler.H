@@ -70,7 +70,7 @@ class Scheduler
 {
 
    /* The scheduler may need private members... */
-private:
+protected:
    ThreadNode *head;
    ThreadNode *tail;
 

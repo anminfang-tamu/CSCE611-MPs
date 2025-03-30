@@ -14,7 +14,7 @@
     code <daveho@cs.umd.edu> and uses his approach for setting up the
     stack of the thread upon start-up.
 
-    Some portions of his code have been derived from David Hovemeyer's
+    Some portions of his code have been derived from David H. Hovemeyer's
     code.
 */
 
@@ -93,7 +93,7 @@ static void thread_start()
 {
     /* This function is used to release the thread for execution in the ready queue. */
 
-    /* We need to add code, but it is probably nothing more than enabling interrupts. */
+    Console::puts("Thread starting - enabling interrupts\n");
     Machine::enable_interrupts();
 }
 

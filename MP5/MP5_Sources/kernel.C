@@ -32,7 +32,7 @@
 
 /* -- UNCOMMENT THE FOLLOWING LINE TO MAKE THREADS TERMINATING */
 
-// #define _TERMINATING_FUNCTIONS_
+#define _TERMINATING_FUNCTIONS_
 /* This macro is defined when we want the thread functions to return, and so
    terminate their thread.
    Otherwise, the thread functions don't return, and the threads run forever.
@@ -57,6 +57,7 @@
 
 #include "thread.H" /* THREAD MANAGEMENT */
 #include "scheduler.H"
+#include "rr_scheduler.H"
 
 /*--------------------------------------------------------------------------*/
 /* MEMORY MANAGEMENT */
@@ -68,7 +69,8 @@ FramePool *SYSTEM_FRAME_POOL;
 /* -- A POOL OF CONTIGUOUS MEMORY FOR THE SYSTEM TO USE */
 MemPool *MEMORY_POOL;
 
-typedef unsigned int size_t;
+// Use a compatible size_t type for low-level environment
+typedef __SIZE_TYPE__ size_t;
 
 // replace the operator "new"
 void *operator new(size_t size)
@@ -109,6 +111,8 @@ Scheduler *SYSTEM_SCHEDULER;
 
 Scheduler *external_scheduler;
 
+void SetupScheduler();
+
 void pass_on_CPU(Thread *_to_thread)
 {
     // Hand over CPU from current thread to _to_thread.
@@ -143,28 +147,29 @@ Thread *thread4;
 
 void fun1()
 {
-    Console::puts("Thread: ");
-    Console::puti(Thread::CurrentThread()->ThreadId());
-    Console::puts("\n");
-    Console::puts("FUN 1 INVOKED!\n");
+    Console::puts("FUN 1 INVOKED\n");
 
 #ifdef _TERMINATING_FUNCTIONS_
-    for (int j = 0; j < 10; j++)
+    for (int i = 0; i < 50; i++)
 #else
-    for (int j = 0;; j++)
+    for (int i = 0; i < 1000; i++)
 #endif
     {
-        Console::puts("FUN 1 IN BURST[");
-        Console::puti(j);
+        Console::puts("FUN 1: TICK [");
+        Console::puti(i);
         Console::puts("]\n");
-        for (int i = 0; i < 10; i++)
+
+        // Do some computation to use up time
+        for (volatile int j = 0; j < 10000; j++)
         {
-            Console::puts("FUN 1: TICK [");
-            Console::puti(i);
-            Console::puts("]\n");
+            // Just burn CPU cycles without yielding
         }
-        pass_on_CPU(thread2);
     }
+
+#ifdef _TERMINATING_FUNCTIONS_
+    Console::puts("FUN 1 TERMINATING\n");
+    external_scheduler->yield();
+#endif
 }
 
 void fun2()
@@ -189,8 +194,12 @@ void fun2()
             Console::puti(i);
             Console::puts("]\n");
         }
-        pass_on_CPU(thread3);
+        external_scheduler->yield();
     }
+
+#ifdef _TERMINATING_FUNCTIONS_
+    Console::puts("FUN 2 TERMINATING\n");
+#endif
 }
 
 void fun3()
@@ -200,7 +209,11 @@ void fun3()
     Console::puts("\n");
     Console::puts("FUN 3 INVOKED!\n");
 
+#ifdef _TERMINATING_FUNCTIONS_
+    for (int j = 0; j < 10; j++)
+#else
     for (int j = 0;; j++)
+#endif
     {
         Console::puts("FUN 3 IN BURST[");
         Console::puti(j);
@@ -211,8 +224,12 @@ void fun3()
             Console::puti(i);
             Console::puts("]\n");
         }
-        pass_on_CPU(thread4);
+        external_scheduler->yield();
     }
+
+#ifdef _TERMINATING_FUNCTIONS_
+    Console::puts("FUN 3 TERMINATING\n");
+#endif
 }
 
 void fun4()
@@ -222,7 +239,11 @@ void fun4()
     Console::puts("\n");
     Console::puts("FUN 4 INVOKED!\n");
 
+#ifdef _TERMINATING_FUNCTIONS_
+    for (int j = 0; j < 10; j++)
+#else
     for (int j = 0;; j++)
+#endif
     {
         Console::puts("FUN 4 IN BURST[");
         Console::puti(j);
@@ -233,8 +254,12 @@ void fun4()
             Console::puti(i);
             Console::puts("]\n");
         }
-        pass_on_CPU(thread1);
+        external_scheduler->yield();
     }
+
+#ifdef _TERMINATING_FUNCTIONS_
+    Console::puts("FUN 4 TERMINATING\n");
+#endif
 }
 
 /*--------------------------------------------------------------------------*/
@@ -317,8 +342,10 @@ int main()
 
     Console::puts("Hello World!\n");
 
-    /* -- LET'S CREATE SOME THREADS... */
+    // Initialize the scheduler
+    SetupScheduler();
 
+    /* -- LET'S CREATE SOME THREADS... */
     Console::puts("CREATING THREAD 1...\n");
     char *stack1 = new char[1024];
     thread1 = new Thread(fun1, stack1, 1024);
@@ -350,12 +377,6 @@ int main()
 #endif
 
     /* -- KICK-OFF THREAD1 ... */
-
-    Console::puts("STARTING THREADS...\n");
-    external_scheduler = new Scheduler();
-    Console::puts("Scheduler initialized\n");
-
-    // Create AND add each thread to the scheduler
     external_scheduler->add(thread1);
     external_scheduler->add(thread2);
     external_scheduler->add(thread3);
@@ -370,4 +391,28 @@ int main()
 
     /* -- WE DO THE FOLLOWING TO KEEP THE COMPILER HAPPY. */
     return 1;
+}
+
+// #define USE_RR_SCHEDULER
+
+void SetupScheduler()
+{
+#ifdef USE_RR_SCHEDULER
+    // RR Scheduler
+    Console::puts("Creating RR Scheduler with 50ms quantum\n");
+    RRScheduler *rr_scheduler = new RRScheduler(50);
+    external_scheduler = rr_scheduler;
+
+    // Register the EOQ timer
+    Console::puts("Registering EOQ Timer with interrupt system\n");
+    InterruptHandler::register_handler(0, ((RRScheduler *)external_scheduler)->get_timer());
+
+    Console::puts("Round-Robin Scheduler initialized (50ms quantum)\n");
+#else
+    // FIFO scheduler
+    external_scheduler = new Scheduler();
+    Console::puts("FIFO Scheduler initialized\n");
+#endif
+
+    Console::puts("Scheduler setup complete\n");
 }

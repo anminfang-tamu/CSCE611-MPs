@@ -1,76 +1,117 @@
 #include "rr_scheduler.H"
-#include "thread.H"
 #include "console.H"
+#include "thread.H"
 #include "machine.H"
+#include "interrupts.H"
 
-// RRScheduler implementation
-RRScheduler::RRScheduler(int quantum_ms) : Scheduler()
-{
-    // Create and start the EOQ timer
-    timer = new EOQTimer(this, quantum_ms);
-    timer->start();
-    Console::puts("Constructed Round-Robin Scheduler with quantum = ");
-    Console::puti(quantum_ms);
-    Console::puts(" ms\n");
-}
+// Global variable to track if a thread should be preempted
+static Thread *thread_to_preempt = nullptr;
 
-void RRScheduler::yield()
-{
-    // Stop the timer before yielding to avoid double-preemption
-    timer->reset();
-
-    // Call the base class yield
-    Scheduler::yield();
-
-    // The timer will restart when we get control back
-}
-
-void RRScheduler::end_of_quantum()
-{
-    Thread *current = Thread::CurrentThread();
-
-    // Force the current thread to yield
-    Console::puts("Quantum expired for thread ");
-    Console::puti(current->ThreadId());
-    Console::puts("\n");
-
-    // Resume the current thread (puts it back in ready queue)
-    resume(current);
-
-    // Get the next thread to run
-    if (!ready_queue->empty())
-    {
-        Thread *next = ready_queue->front();
-        ready_queue->pop_front();
-
-        // Switch to next thread
-        Thread::dispatch_to(next);
-    }
-}
-
-// EOQTimer implementation
 EOQTimer::EOQTimer(RRScheduler *_scheduler, int quantum_ms)
-    : SimpleTimer(quantum_ms), scheduler(_scheduler)
+    : SimpleTimer(100), // Set the timer to 100Hz (10ms intervals)
+      scheduler(_scheduler),
+      tick_counter(0),
+      ticks_per_quantum(quantum_ms / 10)
 {
+    // Make sure we have at least 1 tick per quantum
+    if (ticks_per_quantum < 1)
+        ticks_per_quantum = 1;
+
+    Console::puts("EOQ Timer initialized at 100Hz\n");
 }
 
 void EOQTimer::handle_interrupt(REGS *_r)
 {
-    // Call the base class handler to reset the timer
     SimpleTimer::handle_interrupt(_r);
 
-    // Call the scheduler's end_of_quantum method
-    scheduler->end_of_quantum();
+    // Track timer ticks for debugging
+    static int debug_counter = 0;
+    debug_counter++;
+
+    // Print occasional debug messages
+    if (debug_counter % 20 == 0)
+    {
+        Console::puts("Timer interrupt #");
+        Console::puti(debug_counter);
+        Console::puts("\n");
+    }
+
+    // Increment quantum tick counter
+    tick_counter++;
+
+    // Check if quantum has expired
+    if (tick_counter >= ticks_per_quantum)
+    {
+        // Reset the tick counter
+        tick_counter = 0;
+
+        // Get the current thread
+        Thread *current = Thread::CurrentThread();
+        if (current != nullptr)
+        {
+            Console::puts("\n*** QUANTUM EXPIRED - PREEMPTING THREAD ***\n");
+
+            thread_to_preempt = current;
+
+            Console::puts("Marking thread ");
+            Console::puti(thread_to_preempt->ThreadId());
+            Console::puts(" for preemption\n");
+        }
+        else
+        {
+            Console::puts("No current thread to preempt\n");
+        }
+    }
 }
 
-void EOQTimer::reset()
+void EOQTimer::restart()
 {
-    // Call the parent class's reset method
-    SimpleTimer::reset();
+    tick_counter = 0;
 }
 
-void EOQTimer::start()
+RRScheduler::RRScheduler(int _quantum_ms)
+    : Scheduler(), quantum_ms(_quantum_ms)
 {
-    // Call the parent class's start method
-    SimpleTimer::start();
+    Console::puts("Creating EOQ Timer...\n");
+
+    timer = new EOQTimer(this, quantum_ms);
+
+    int ticks = quantum_ms / 10;
+    if (ticks < 1)
+        ticks = 1;
+
+    Console::puts("Round-Robin Scheduler initialized with quantum = ");
+    Console::puti(quantum_ms);
+    Console::puts(" ms (");
+    Console::puti(ticks);
+    Console::puts(" ticks)\n");
+}
+
+void RRScheduler::yield()
+{
+    // Check if a thread is marked for preemption
+    if (thread_to_preempt != nullptr && thread_to_preempt == Thread::CurrentThread())
+    {
+        Console::puts("Handling deferred preemption for thread ");
+        Console::puti(thread_to_preempt->ThreadId());
+        Console::puts("\n");
+
+        // Clear the preemption mark
+        thread_to_preempt = nullptr;
+
+        // Reset timer
+        timer->restart();
+    }
+    else
+    {
+        timer->restart();
+    }
+
+    Scheduler::yield();
+}
+
+void RRScheduler::end_of_quantum()
+{
+    Console::puts("end_of_quantum: This method should not be called anymore\n");
+    yield();
 }

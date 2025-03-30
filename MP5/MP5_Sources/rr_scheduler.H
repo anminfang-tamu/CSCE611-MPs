@@ -4,37 +4,39 @@
 #include "scheduler.H"
 #include "simple_timer.H"
 
-class EOQTimer; // Forward declaration
+// Forward declaration
+class RRScheduler;
 
-class RRScheduler : public Scheduler
-{
-private:
-    EOQTimer *timer; // End-of-quantum timer
-
-public:
-    RRScheduler(int quantum_ms); // Constructor with quantum size in milliseconds
-
-    // Override the yield method to handle quantum reset
-    virtual void yield();
-
-    // Method called by timer when quantum expires
-    void end_of_quantum();
-};
-
-// EOQ Timer class
 class EOQTimer : public SimpleTimer
 {
 private:
     RRScheduler *scheduler;
+    int tick_counter;
+    int ticks_per_quantum;
 
 public:
     EOQTimer(RRScheduler *_scheduler, int quantum_ms);
-
-    // Override the interrupt handler to call scheduler's end_of_quantum
     virtual void handle_interrupt(REGS *_r);
 
-    void reset();
-    void start();
+    void restart();
+
+    void set_ticks_per_quantum(int ticks) { ticks_per_quantum = ticks; }
+};
+
+class RRScheduler : public Scheduler
+{
+private:
+    EOQTimer *timer;
+    int quantum_ms;
+
+public:
+    RRScheduler(int _quantum_ms);
+
+    virtual void yield();
+
+    void end_of_quantum();
+
+    EOQTimer *get_timer() { return timer; }
 };
 
 #endif
