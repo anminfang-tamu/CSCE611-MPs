@@ -51,6 +51,7 @@
 
 #include "simple_disk.H"	  /* DISK DEVICE */
 #include "nonblocking_disk.H" /* WE NEED TO INCLUDE nonblocking_disk.H */
+#include "thread_safe_disk.H" /* WE NEED TO INCLUDE thread_safe_disk.H */
 
 #include "system.H" /* SYSTEM COMPONENTS: SCHEDULER, MEMORY, DISK */
 
@@ -314,8 +315,8 @@ int main()
 
 	// System::DISK = new SimpleDisk(System::DISK_SIZE); // Replace this with commented code below when you are ready!
 
-	// The NonBlockingDisk uses a scheduler.
-	System::DISK = new NonBlockingDisk(System::DISK_SIZE);
+	// The ThreadSafeDisk uses a scheduler and provides thread-safe access to disk
+	System::DISK = new ThreadSafeDisk(System::DISK_SIZE);
 
 	/* -- SCHEDULER -- IF YOU HAVE ONE -- */
 
