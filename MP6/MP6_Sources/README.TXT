@@ -90,3 +90,47 @@ mem_pool.H/C            Definition and implementation of a vanilla
                         FEEL FREE TO REPLACE THIS ABOMINATION WITH YOUR
                         OWN IMPLEMENTATION!!
 
+MP6: Kernel-Level Device Drivers for a NonBlockingDisk
+
+This project implements a non-blocking disk driver on top of a simple programmed I/O block device (SimpleDisk). The key improvement in the NonBlockingDisk implementation is that it avoids busy waiting while the disk device is preparing to transfer data.
+
+Implementation Details:
+
+1. NonBlockingDisk Class:
+   - Inherits from SimpleDisk class
+   - Overrides the wait_while_busy() method to yield CPU instead of busy waiting
+   - Implements a request queue for disk operations
+   - Uses the scheduler to manage thread scheduling
+
+2. Request Queue:
+   - When the disk is busy, new read/write requests are added to a queue
+   - Each request is associated with the thread that made it
+   - When the disk becomes available, requests are processed in FIFO order
+   - After a request is processed, the associated thread is resumed
+
+3. Interrupt Handling:
+   - Properly manages interrupt states during critical operations
+   - Ensures interrupts are enabled when yielding to other threads
+   - Prevents race conditions when modifying the request queue
+
+4. Key Methods:
+   - wait_while_busy(): Yields CPU while disk is busy instead of busy looping
+   - read()/write(): Handles direct operations or queues requests if disk is busy
+   - add_request(): Adds a request to the queue
+   - process_next_request(): Processes the next request in the queue
+
+Testing:
+- The implementation was tested with multiple threads performing disk operations
+- Verified that threads don't waste CPU time waiting for disk operations to complete
+- Ensured correct ordering of operations on the disk
+
+Note on Thread Safety:
+- The current implementation assumes only one thread accesses the disk at a time
+- For extension to multiple threads, additional synchronization would be needed
+
+Running the Code:
+1. Build the project: make clean && make
+2. Run the emulator: make run
+
+The emulator will start the kernel with four threads, one of which performs disk operations using our NonBlockingDisk implementation.
+

@@ -18,6 +18,11 @@
     "irq.C": "cpp",
     "scheduler.C": "cpp",
     "thread.C": "cpp",
-    "rr_scheduler.C": "cpp"
+    "rr_scheduler.C": "cpp",
+    "scheduler copy.C": "cpp",
+    "nonblocking_disk.C": "cpp",
+    "simple_disk.C": "cpp",
+    "system.C": "cpp",
+    "test_nonblocking_disk.C": "cpp"
   }
 }

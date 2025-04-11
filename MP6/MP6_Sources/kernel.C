@@ -19,70 +19,73 @@
 
 /* -- COMMENT/UNCOMMENT THE FOLLOWING LINE TO EXCLUDE/INCLUDE SCHEDULER CODE */
 
-//#define _USES_SCHEDULER_
+#define _USES_SCHEDULER_
 /* This macro is defined when we want to force the code below to use
    a scheduler.
    Otherwise, no scheduler is used, and the threads pass control to each
    other in a co-routine fashion.
 */
 
-#define MB * (0x1 << 20)
-#define KB * (0x1 << 10)
+/* MB and KB are defined in system.H */
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
 
-#include "machine.H"         /* LOW-LEVEL STUFF   */
+#include "machine.H" /* LOW-LEVEL STUFF   */
 #include "console.H"
 #include "gdt.H"
-#include "idt.H"             /* EXCEPTION MGMT.   */
+#include "idt.H" /* EXCEPTION MGMT.   */
 #include "irq.H"
-#include "exceptions.H"     
+#include "exceptions.H"
 #include "interrupts.H"
 
-#include "simple_timer.H"    /* TIMER MANAGEMENT  */
+#include "simple_timer.H" /* TIMER MANAGEMENT  */
 
-#include "frame_pool.H"      /* MEMORY MANAGEMENT */
+#include "frame_pool.H" /* MEMORY MANAGEMENT */
 #include "mem_pool.H"
 
-#include "thread.H"         /* THREAD MANAGEMENT */
+#include "thread.H" /* THREAD MANAGEMENT */
 
-#include "scheduler.H"      /* WE WILL NEED A SCHEDULER WITH NonBlockingDisk */
+#include "scheduler.H" /* WE WILL NEED A SCHEDULER WITH NonBlockingDisk */
 
-#include "simple_disk.H"    /* DISK DEVICE */
-							/* YOU MAY NEED TO INCLUDE nonblocking_disk.H */
+#include "simple_disk.H"	  /* DISK DEVICE */
+#include "nonblocking_disk.H" /* WE NEED TO INCLUDE nonblocking_disk.H */
 
-#include "system.H"         /* SYSTEM COMPONENTS: SCHEDULER, MEMORY, DISK */
+#include "system.H" /* SYSTEM COMPONENTS: SCHEDULER, MEMORY, DISK */
 
 /*--------------------------------------------------------------------------*/
 /* MEMORY MANAGEMENT */
 /*--------------------------------------------------------------------------*/
 
+// Define size_t as unsigned int
+#ifndef _SIZE_T
+#define _SIZE_T
 typedef unsigned int size_t;
+#endif
 
-//replace the operator "new"
-void* operator new (size_t size)
+// replace the operator "new"
+void *operator new(size_t size)
 {
 	unsigned long a = System::MEMORY_POOL->allocate((unsigned long)size);
-	return (void*)a;
+	return (void *)a;
 }
 
-//replace the operator "new[]"
-void* operator new[](size_t size)
+// replace the operator "new[]"
+void *operator new[](size_t size)
 {
 	unsigned long a = System::MEMORY_POOL->allocate((unsigned long)size);
-	return (void*)a;
+	return (void *)a;
 }
 
-//replace the operator "delete"
-void operator delete (void* p, size_t size)
+// replace the operator "delete"
+void operator delete(void *p, size_t size)
 {
 	System::MEMORY_POOL->release((unsigned long)p);
 }
 
-//replace the operator "delete[]"
-void operator delete[](void* p)
+// replace the operator "delete[]"
+void operator delete[](void *p)
 {
 	System::MEMORY_POOL->release((unsigned long)p);
 }
@@ -99,7 +102,7 @@ void operator delete[](void* p)
 /* JUST AN AUXILIARY FUNCTION */
 /*--------------------------------------------------------------------------*/
 
-void pass_on_CPU(Thread* _to_thread)
+void pass_on_CPU(Thread *_to_thread)
 {
 #ifndef _USES_SCHEDULER_
 	/* We don't use a scheduler. Explicitely pass control to the next
@@ -110,6 +113,9 @@ void pass_on_CPU(Thread* _to_thread)
 	   we pre-empt the current thread by putting it onto the ready
 	   queue and yielding the CPU. */
 
+	// Make sure interrupts are enabled before scheduling
+	Machine::enable_interrupts();
+
 	System::SCHEDULER->resume(Thread::CurrentThread());
 	System::SCHEDULER->yield();
 #endif
@@ -119,23 +125,31 @@ void pass_on_CPU(Thread* _to_thread)
 /* A FEW THREADS (pointer to TCB's and thread functions) */
 /*--------------------------------------------------------------------------*/
 
-Thread* thread1; // simply prints out to console
-Thread* thread2; // performs READ/WRITE operations on disk
-Thread* thread3; // simply prints out to console
-Thread* thread4; // simply prints out to console
+Thread *thread1; // simply prints out to console
+Thread *thread2; // performs READ/WRITE operations on disk
+Thread *thread3; // simply prints out to console
+Thread *thread4; // simply prints out to console
 
 void fun1()
 {
-	Console::puts("THREAD: "); Console::puti(Thread::CurrentThread()->ThreadId()); Console::puts("\n");
+	Console::puts("THREAD: ");
+	Console::puti(Thread::CurrentThread()->ThreadId());
+	Console::puts("\n");
 
 	Console::puts("FUN 1 INVOKED!\n");
 
-	for (int j = 0;; j++) {
+	for (int j = 0;; j++)
+	{
 
-		Console::puts("FUN 1 IN ITERATION["); Console::puti(j); Console::puts("]\n");
+		Console::puts("FUN 1 IN ITERATION[");
+		Console::puti(j);
+		Console::puts("]\n");
 
-		for (int i = 0; i < 10; i++) {
-			Console::puts("FUN 1: TICK ["); Console::puti(i); Console::puts("]\n");
+		for (int i = 0; i < 10; i++)
+		{
+			Console::puts("FUN 1: TICK [");
+			Console::puti(i);
+			Console::puts("]\n");
 		}
 
 		pass_on_CPU(thread2);
@@ -144,29 +158,39 @@ void fun1()
 
 void fun2()
 {
-	Console::puts("THREAD: "); Console::puti(Thread::CurrentThread()->ThreadId()); Console::puts("\n");
+	Console::puts("THREAD: ");
+	Console::puti(Thread::CurrentThread()->ThreadId());
+	Console::puts("\n");
 
 	Console::puts("FUN 2 INVOKED!\n");
 
 	unsigned char buf[DISK_BLOCK_SIZE];
-	int  read_block = 1;
-	int  write_block = 0;
+	int read_block = 1;
+	int write_block = 0;
 
-	for (int j = 0;; j++) {
+	for (int j = 0;; j++)
+	{
 
-		Console::puts("FUN 2 IN ITERATION["); Console::puti(j); Console::puts("]\n");
+		Console::puts("FUN 2 IN ITERATION[");
+		Console::puti(j);
+		Console::puts("]\n");
 
 		/* -- Read */
-		Console::puts("Reading Block "); Console::puti(read_block); Console::puts(" from disk...\n");
+		Console::puts("Reading Block ");
+		Console::puti(read_block);
+		Console::puts(" from disk...\n");
 		System::DISK->read(read_block, buf);
 		Console::puts("\nContent of block is:");
-		for (int i = 0; i < DISK_BLOCK_SIZE; i++) {
+		for (int i = 0; i < DISK_BLOCK_SIZE; i++)
+		{
 			Console::putui((unsigned int)buf[i]);
 			buf[i] = j % 256;
 		}
 		Console::puts("\n");
 
-		Console::puts("Writing buffer to Block "); Console::puti(write_block); Console::puts(" on disk...\n");
+		Console::puts("Writing buffer to Block ");
+		Console::puti(write_block);
+		Console::puts(" on disk...\n");
 		System::DISK->write(write_block, buf);
 		Console::puts("\nDone writing\n");
 
@@ -181,16 +205,24 @@ void fun2()
 
 void fun3()
 {
-	Console::puts("THREAD: "); Console::puti(Thread::CurrentThread()->ThreadId()); Console::puts("\n");
+	Console::puts("THREAD: ");
+	Console::puti(Thread::CurrentThread()->ThreadId());
+	Console::puts("\n");
 
 	Console::puts("FUN 3 INVOKED!\n");
 
-	for (int j = 0;; j++) {
+	for (int j = 0;; j++)
+	{
 
-		Console::puts("FUN 3 IN BURST["); Console::puti(j); Console::puts("]\n");
+		Console::puts("FUN 3 IN BURST[");
+		Console::puti(j);
+		Console::puts("]\n");
 
-		for (int i = 0; i < 10; i++) {
-			Console::puts("FUN 3: TICK ["); Console::puti(i); Console::puts("]\n");
+		for (int i = 0; i < 10; i++)
+		{
+			Console::puts("FUN 3: TICK [");
+			Console::puti(i);
+			Console::puts("]\n");
 		}
 
 		pass_on_CPU(thread4);
@@ -199,14 +231,22 @@ void fun3()
 
 void fun4()
 {
-	Console::puts("THREAD: "); Console::puti(Thread::CurrentThread()->ThreadId()); Console::puts("\n");
+	Console::puts("THREAD: ");
+	Console::puti(Thread::CurrentThread()->ThreadId());
+	Console::puts("\n");
 
-	for (int j = 0;; j++) {
+	for (int j = 0;; j++)
+	{
 
-		Console::puts("FUN 4 IN BURST["); Console::puti(j); Console::puts("]\n");
+		Console::puts("FUN 4 IN BURST[");
+		Console::puti(j);
+		Console::puts("]\n");
 
-		for (int i = 0; i < 10; i++) {
-			Console::puts("FUN 4: TICK ["); Console::puti(i); Console::puts("]\n");
+		for (int i = 0; i < 10; i++)
+		{
+			Console::puts("FUN 4: TICK [");
+			Console::puti(i);
+			Console::puts("]\n");
 		}
 
 		pass_on_CPU(thread1);
@@ -232,12 +272,14 @@ int main()
 
 	/* -- EXAMPLE OF AN EXCEPTION HANDLER -- */
 
-	class DBZ_Handler : public ExceptionHandler {
+	class DBZ_Handler : public ExceptionHandler
+	{
 	public:
-		virtual void handle_exception(REGS* _regs)
+		virtual void handle_exception(REGS *_regs)
 		{
 			Console::puts("DIVISION BY ZERO!\n");
-			for (;;);
+			for (;;)
+				;
 		}
 	} dbz_handler;
 
@@ -248,9 +290,9 @@ int main()
 	/*    NOTE2: This is not an exercise in memory management. The implementation
 				of the memory management is accordingly *very* primitive! */
 
-				/* ---- Initialize a frame pool; details are in its implementation */
+	/* ---- Initialize a frame pool; details are in its implementation */
 	FramePool system_frame_pool;
-	FramePool* SYSTEM_FRAME_POOL = &system_frame_pool;
+	FramePool *SYSTEM_FRAME_POOL = &system_frame_pool;
 
 	/* ---- Create a memory pool of 256 frames. */
 	MemPool memory_pool(SYSTEM_FRAME_POOL, 256); // We don't have a memory manager yet. Pool is on the stack.
@@ -270,11 +312,10 @@ int main()
 
 	/* -- DISK DEVICE -- */
 
-	System::DISK = new SimpleDisk(System::DISK_SIZE); // Replace this with commented code below when you are ready!
+	// System::DISK = new SimpleDisk(System::DISK_SIZE); // Replace this with commented code below when you are ready!
 
-	// #define _USES_SCHEDULER_
-	// // The NonBlockingDisk uses a scheduler.
-	// System::DISK = new NonBlockingDisk(System::DISK_SIZE);
+	// The NonBlockingDisk uses a scheduler.
+	System::DISK = new NonBlockingDisk(System::DISK_SIZE);
 
 	/* -- SCHEDULER -- IF YOU HAVE ONE -- */
 
@@ -293,22 +334,22 @@ int main()
 	/* -- LET'S CREATE SOME THREADS... */
 
 	Console::puts("CREATING THREAD 1...\n");
-	char* stack1 = new char[1024];
+	char *stack1 = new char[1024];
 	thread1 = new Thread(fun1, stack1, 1024);
 	Console::puts("DONE\n");
 
 	Console::puts("CREATING THREAD 2...");
-	char* stack2 = new char[1024];
+	char *stack2 = new char[1024];
 	thread2 = new Thread(fun2, stack2, 1024);
 	Console::puts("DONE\n");
 
 	Console::puts("CREATING THREAD 3...");
-	char* stack3 = new char[1024];
+	char *stack3 = new char[1024];
 	thread3 = new Thread(fun3, stack3, 1024);
 	Console::puts("DONE\n");
 
 	Console::puts("CREATING THREAD 4...");
-	char* stack4 = new char[1024];
+	char *stack4 = new char[1024];
 	thread4 = new Thread(fun4, stack4, 1024);
 	Console::puts("DONE\n");
 

@@ -69,6 +69,7 @@ void Scheduler::yield()
       Console::puts("ERROR: No threads to run!\n");
       assert(false);
     }
+    // Enable interrupts before returning
     Machine::enable_interrupts();
     return;
   }
@@ -99,11 +100,11 @@ void Scheduler::yield()
     }
   }
 
+  // Enable interrupts before dispatching
+  Machine::enable_interrupts();
+
   // Switch to the next thread
   Thread::dispatch_to(next);
-
-  // Interrupts will be restored when we come back from dispatch
-  Machine::enable_interrupts();
 }
 
 void Scheduler::resume(Thread *_thread)

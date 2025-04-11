@@ -21,7 +21,7 @@ clean:
 
 run:
 	qemu-system-x86_64 -kernel kernel.bin -serial stdio \
--device piix3-ide,id=ide -drive id=disk,file=c.img,format=raw,if=none -device ide-hd,drive=disk,bus=ide.0
+-device piix3-ide,id=ide -drive id=disk,file=c_new.img,format=raw,if=none -device ide-hd,drive=disk,bus=ide.0
 
 debug:
 	qemu-system-x86_64 -s -S -kernel kernel.bin \
@@ -77,10 +77,10 @@ simple_timer.o: simple_timer.C simple_timer.H
 simple_disk.o: simple_disk.C simple_disk.H
 	$(GCC) $(GCC_OPTIONS) -c -o simple_disk.o simple_disk.C
 
-nonblocking_disk.o: nonblocking_disk.C simple_disk.H
+nonblocking_disk.o: nonblocking_disk.C nonblocking_disk.H simple_disk.H
 	$(GCC) $(GCC_OPTIONS) -c -o nonblocking_disk.o nonblocking_disk.C
 
-system.o: system.C simple_disk.H 
+system.o: system.C system.H simple_disk.H nonblocking_disk.H
 	$(GCC) $(GCC_OPTIONS) -c -o system.o system.C
 
 # ==== MEMORY =====
@@ -104,7 +104,7 @@ scheduler.o: scheduler.C scheduler.H thread.H
 
 # ==== KERNEL MAIN FILE =====
 
-kernel.o: kernel.C machine.H console.H gdt.H idt.H irq.H exceptions.H interrupts.H simple_timer.H frame_pool.H mem_pool.H thread.H simple_disk.H scheduler.H
+kernel.o: kernel.C machine.H console.H gdt.H idt.H irq.H exceptions.H interrupts.H simple_timer.H frame_pool.H mem_pool.H thread.H simple_disk.H nonblocking_disk.H scheduler.H
 	$(GCC) $(GCC_OPTIONS) -c -o kernel.o kernel.C
 
 kernel.bin: start.o utils.o kernel.o \
