@@ -55,6 +55,7 @@ private:
    DiskRequest *pending_head; // Head of the request queue
    DiskRequest *pending_tail; // Tail of the request queue
 
+   // helper functions
    void add_request(unsigned long _block_no, unsigned char *_buffer, bool _is_read);
    void process_next_request();
 

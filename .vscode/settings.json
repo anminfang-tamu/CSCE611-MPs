@@ -23,6 +23,10 @@
     "nonblocking_disk.C": "cpp",
     "simple_disk.C": "cpp",
     "system.C": "cpp",
-    "test_nonblocking_disk.C": "cpp"
+    "test_nonblocking_disk.C": "cpp",
+    "mutex.C": "cpp",
+    "thread_safe_disk.C": "cpp",
+    "thread_safe_disk_test.C": "cpp",
+    "test_threadsafe.C": "cpp"
   }
 }

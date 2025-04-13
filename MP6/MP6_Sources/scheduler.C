@@ -1,17 +1,3 @@
-/*
- File: scheduler.C
-
- Author:
- Date  :
-
- */
-
-/*--------------------------------------------------------------------------*/
-/* DEFINES */
-/*--------------------------------------------------------------------------*/
-
-/* -- (none) -- */
-
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
@@ -58,19 +44,24 @@ void Scheduler::yield()
   Thread *next;
 
   // Disable interrupts during scheduling decisions
-  Machine::disable_interrupts();
+  bool interrupts_were_enabled = Machine::interrupts_enabled();
+  if (interrupts_were_enabled)
+  {
+    Machine::disable_interrupts();
+  }
 
   if (head == nullptr)
   {
-    // If no other threads are ready, keep running the current thread
-    // or panic if there's no current thread either
     if (current == nullptr)
     {
       Console::puts("ERROR: No threads to run!\n");
       assert(false);
     }
-    // Enable interrupts before returning
-    Machine::enable_interrupts();
+    // Restore interrupt state before returning
+    if (interrupts_were_enabled)
+    {
+      Machine::enable_interrupts();
+    }
     return;
   }
 
@@ -84,8 +75,6 @@ void Scheduler::yield()
   }
   delete old_head;
 
-  // Add the current thread to the back of the ready queue, but only if
-  // there is a current thread (not the case when starting the first thread)
   if (current != nullptr)
   {
     ThreadNode *new_node = new ThreadNode(current);
@@ -100,8 +89,11 @@ void Scheduler::yield()
     }
   }
 
-  // Enable interrupts before dispatching
-  Machine::enable_interrupts();
+  // Restore interrupt state before dispatching
+  if (interrupts_were_enabled)
+  {
+    Machine::enable_interrupts();
+  }
 
   // Switch to the next thread
   Thread::dispatch_to(next);
@@ -110,7 +102,11 @@ void Scheduler::yield()
 void Scheduler::resume(Thread *_thread)
 {
   // Add the thread to the back of the ready queue
-  Machine::disable_interrupts();
+  bool interrupts_were_enabled = Machine::interrupts_enabled();
+  if (interrupts_were_enabled)
+  {
+    Machine::disable_interrupts();
+  }
 
   // Don't add the thread if it's already in the queue
   ThreadNode *current = head;
@@ -119,7 +115,10 @@ void Scheduler::resume(Thread *_thread)
     if (current->thread == _thread)
     {
       // Thread is already in the queue
-      Machine::enable_interrupts();
+      if (interrupts_were_enabled)
+      {
+        Machine::enable_interrupts();
+      }
       return;
     }
     current = current->next;
@@ -136,7 +135,10 @@ void Scheduler::resume(Thread *_thread)
     tail = new_node;
   }
 
-  Machine::enable_interrupts();
+  if (interrupts_were_enabled)
+  {
+    Machine::enable_interrupts();
+  }
 }
 
 void Scheduler::add(Thread *_thread)
@@ -152,7 +154,11 @@ void Scheduler::terminate(Thread *_thread)
 {
   Thread *current = Thread::CurrentThread();
 
-  Machine::disable_interrupts();
+  bool interrupts_were_enabled = Machine::interrupts_enabled();
+  if (interrupts_were_enabled)
+  {
+    Machine::disable_interrupts();
+  }
 
   // If we're terminating the current thread
   if (_thread == current)
@@ -218,8 +224,8 @@ void Scheduler::terminate(Thread *_thread)
     }
   }
 
-  Machine::enable_interrupts();
-
-  // TODO: Free resources associated with the terminated thread
-  // This is tricky since the thread can't free its own stack while using it
+  if (interrupts_were_enabled)
+  {
+    Machine::enable_interrupts();
+  }
 }

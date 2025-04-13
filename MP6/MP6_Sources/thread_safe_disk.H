@@ -1,14 +1,3 @@
-/*
-     File        : thread_safe_disk.H
-
-     Author      : [YOUR NAME]
-     Date        : [CURRENT DATE]
-
-     Description : Thread-safe disk implementation that allows multiple threads
-                   to safely access the disk concurrently.
-
-*/
-
 #ifndef _THREAD_SAFE_DISK_H_
 #define _THREAD_SAFE_DISK_H_
 
@@ -47,10 +36,6 @@ struct ThreadSafeRequest
     }
 };
 
-/*--------------------------------------------------------------------------*/
-/* T h r e a d S a f e D i s k */
-/*--------------------------------------------------------------------------*/
-
 class ThreadSafeDisk : public NonBlockingDisk
 {
 private:
@@ -60,14 +45,12 @@ private:
     ThreadSafeRequest *ts_pending_head; // Head of the thread-safe request queue
     ThreadSafeRequest *ts_pending_tail; // Tail of the thread-safe request queue
 
-    // Private helper methods
+    // helper methods
     void add_request_safe(unsigned long _block_no, unsigned char *_buffer, bool _is_read);
     void process_next_request_safe();
 
 public:
     ThreadSafeDisk(unsigned int _size);
-    /* Creates a ThreadSafeDisk device with the given size connected to the
-       MASTER slot of the primary ATA controller. */
 
     // Override NonBlockingDisk methods to add thread safety
     virtual void wait_while_busy() override;

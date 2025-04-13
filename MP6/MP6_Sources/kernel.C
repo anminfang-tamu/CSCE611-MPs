@@ -115,7 +115,10 @@ void pass_on_CPU(Thread *_to_thread)
 	   queue and yielding the CPU. */
 
 	// Make sure interrupts are enabled before scheduling
-	Machine::enable_interrupts();
+	if (!Machine::interrupts_enabled())
+	{
+		Machine::enable_interrupts();
+	}
 
 	System::SCHEDULER->resume(Thread::CurrentThread());
 	System::SCHEDULER->yield();

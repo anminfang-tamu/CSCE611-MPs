@@ -1,13 +1,3 @@
-/*
-     File        : mutex.C
-
-     Author      : [YOUR NAME]
-     Date        : [CURRENT DATE]
-
-     Description : Simple mutex implementation for thread synchronization
-
-*/
-
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
@@ -31,7 +21,11 @@ Mutex::Mutex()
 void Mutex::lock()
 {
     // Disable interrupts while checking and updating mutex state
-    Machine::disable_interrupts();
+    bool interrupts_were_enabled = Machine::interrupts_enabled();
+    if (interrupts_were_enabled)
+    {
+        Machine::disable_interrupts();
+    }
 
     // If mutex is already locked, current thread needs to wait
     while (locked)
@@ -40,29 +34,42 @@ void Mutex::lock()
         Thread *current = Thread::CurrentThread();
 
         // We need to yield to another thread
-        // Note: We re-enable interrupts before yielding
-        Machine::enable_interrupts();
+        // Re-enable interrupts before yielding if they were enabled
+        if (interrupts_were_enabled)
+        {
+            Machine::enable_interrupts();
+        }
 
         // Yield to other threads and try again later
         System::SCHEDULER->resume(current);
         System::SCHEDULER->yield();
 
-        // When we come back from yield, disable interrupts again and check mutex
-        Machine::disable_interrupts();
+        // When we come back from yield, disable interrupts again if they were enabled
+        if (interrupts_were_enabled && Machine::interrupts_enabled())
+        {
+            Machine::disable_interrupts();
+        }
     }
 
     // Now the mutex is available, lock it
     locked = true;
     owner = Thread::CurrentThread();
 
-    // Re-enable interrupts
-    Machine::enable_interrupts();
+    // Re-enable interrupts if they were enabled before
+    if (interrupts_were_enabled)
+    {
+        Machine::enable_interrupts();
+    }
 }
 
 void Mutex::unlock()
 {
     // Disable interrupts while updating mutex state
-    Machine::disable_interrupts();
+    bool interrupts_were_enabled = Machine::interrupts_enabled();
+    if (interrupts_were_enabled)
+    {
+        Machine::disable_interrupts();
+    }
 
     // Only the owner can unlock the mutex
     if (owner == Thread::CurrentThread())
@@ -76,19 +83,29 @@ void Mutex::unlock()
         Console::puts("ERROR: Thread trying to unlock a mutex it doesn't own!\n");
     }
 
-    // Re-enable interrupts
-    Machine::enable_interrupts();
+    // Re-enable interrupts if they were enabled before
+    if (interrupts_were_enabled)
+    {
+        Machine::enable_interrupts();
+    }
 }
 
 bool Mutex::try_lock()
 {
     // Disable interrupts while checking and updating mutex state
-    Machine::disable_interrupts();
+    bool interrupts_were_enabled = Machine::interrupts_enabled();
+    if (interrupts_were_enabled)
+    {
+        Machine::disable_interrupts();
+    }
 
     // If mutex is already locked, return false immediately
     if (locked)
     {
-        Machine::enable_interrupts();
+        if (interrupts_were_enabled)
+        {
+            Machine::enable_interrupts();
+        }
         return false;
     }
 
@@ -96,8 +113,11 @@ bool Mutex::try_lock()
     locked = true;
     owner = Thread::CurrentThread();
 
-    // Re-enable interrupts
-    Machine::enable_interrupts();
+    // Re-enable interrupts if they were enabled before
+    if (interrupts_were_enabled)
+    {
+        Machine::enable_interrupts();
+    }
 
     return true;
 }

@@ -1,20 +1,3 @@
-/*
-     File        : nonblocking_disk.c
-
-     Author      : [YOUR NAME]
-     Modified    : [CURRENT DATE]
-
-     Description : Implementation of a NonBlockingDisk that uses a scheduler
-                   instead of busy waiting when the disk is not ready.
-
-*/
-
-/*--------------------------------------------------------------------------*/
-/* DEFINES */
-/*--------------------------------------------------------------------------*/
-
-/* -- (none) -- */
-
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
@@ -52,7 +35,10 @@ void NonBlockingDisk::wait_while_busy()
     Thread *current = Thread::CurrentThread();
 
     // Make sure interrupts are enabled before yielding
-    Machine::enable_interrupts();
+    if (!Machine::interrupts_enabled())
+    {
+      Machine::enable_interrupts();
+    }
 
     // Yield CPU to another thread
     System::SCHEDULER->resume(current);
@@ -84,8 +70,11 @@ void NonBlockingDisk::add_request(unsigned long _block_no, unsigned char *_buffe
 
 void NonBlockingDisk::process_next_request()
 {
-  // Always enable interrupts at the beginning
-  Machine::enable_interrupts();
+  // Make sure interrupts are enabled at the beginning
+  if (!Machine::interrupts_enabled())
+  {
+    Machine::enable_interrupts();
+  }
 
   // Make sure we have a request to process
   if (pending_head == nullptr)
@@ -140,8 +129,11 @@ void NonBlockingDisk::process_next_request()
 
 void NonBlockingDisk::read(unsigned long _sector_number, unsigned char *_buffer)
 {
-  // Always enable interrupts first
-  Machine::enable_interrupts();
+  // Always enable interrupts first if they're not already enabled
+  if (!Machine::interrupts_enabled())
+  {
+    Machine::enable_interrupts();
+  }
 
   // Disable interrupts while checking the disk state and updating the queue
   Machine::disable_interrupts();
@@ -179,8 +171,11 @@ void NonBlockingDisk::read(unsigned long _sector_number, unsigned char *_buffer)
 
 void NonBlockingDisk::write(unsigned long _sector_number, unsigned char *_buffer)
 {
-  // Always enable interrupts first
-  Machine::enable_interrupts();
+  // Always enable interrupts first if they're not already enabled
+  if (!Machine::interrupts_enabled())
+  {
+    Machine::enable_interrupts();
+  }
 
   // Disable interrupts while checking the disk state and updating the queue
   Machine::disable_interrupts();
