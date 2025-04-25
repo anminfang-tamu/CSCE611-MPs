@@ -27,6 +27,9 @@
     "mutex.C": "cpp",
     "thread_safe_disk.C": "cpp",
     "thread_safe_disk_test.C": "cpp",
-    "test_threadsafe.C": "cpp"
+    "test_threadsafe.C": "cpp",
+    "file_system.C": "cpp",
+    "file.C": "cpp",
+    "frame_pool.C": "cpp"
   }
 }
