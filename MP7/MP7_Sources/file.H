@@ -42,52 +42,31 @@ class FileSystem;
 
 class File
 {
-
 private:
-   /* -- your file data structures here ... */
-
-   /* You will need a reference to the inode, maybe even a reference to the
-      file system.
-      You may also want a current position, which indicates which position in
-      the file you will read or write next. */
-
-   Inode *inode;                  // Pointer to the inode for this file
-   FileSystem *fs;                // Pointer to the file system
-   unsigned int current_position; // Current position in the file for read/write operations
-   unsigned int current_block;    // Current block index being accessed
-
-   unsigned char block_cache[SimpleDisk::BLOCK_SIZE];
-   /* It will be helpful to have a cached copy of the block that you are reading
-      from and writing to. In the base submission, files have only one block, which
-      you can cache here. You read the data from disk to cache whenever you open the
-      file, and you write the data to disk whenever you close the file.
-   */
+   Inode *inode;                                      // File's inode
+   FileSystem *fs;                                    // File system reference
+   unsigned int current_position;                     // Current read/write position
+   unsigned int current_block;                        // Current block index
+   unsigned char block_cache[SimpleDisk::BLOCK_SIZE]; // Block cache
 
 public:
    File(FileSystem *_fs, int _id);
-   /* Constructor for the file handle. Set the 'current position' to be at the
-      beginning of the file. */
+   /* Opens file and initializes position to start */
 
    ~File();
-   /* Closes the file. Deletes any data structures associated with the file handle. */
+   /* Closes file and writes cached data */
 
    int Read(unsigned int _n, char *_buf);
-   /* Read _n characters from the file starting at the current position and
-      copy them in _buf.  Return the number of characters read.
-      Do not read beyond the end of the file. */
+   /* Reads _n bytes from current position into _buf */
 
    int Write(unsigned int _n, const char *_buf);
-   /* Write _n characters to the file starting at the current position. If the write
-      extends over the end of the file, extend the length of the file until all data is
-      written or until the maximum file size is reached. Do not write beyond the maximum
-      length of the file.
-      Return the number of characters written. */
+   /* Writes _n bytes from _buf to current position */
 
    void Reset();
-   /* Set the 'current position' to the beginning of the file. */
+   /* Resets position to start of file */
 
    bool EoF();
-   /* Is the current position for the file at the end of the file? */
+   /* Returns true if at end of file */
 };
 
 #endif

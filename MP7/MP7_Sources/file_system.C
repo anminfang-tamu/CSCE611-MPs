@@ -31,31 +31,26 @@
 
 unsigned int Inode::GetBlockNo(unsigned int index)
 {
-    // If index is less than MAX_DIRECT_BLOCKS, return the direct block
+    // Direct block access
     if (index < MAX_DIRECT_BLOCKS)
     {
         return direct_blocks[index];
     }
 
-    // Otherwise, we need to access the indirect block
+    // Indirect block access
     if (index < MAX_DIRECT_BLOCKS + BLOCKS_PER_INDIRECT)
     {
-        // Check if we have an indirect block allocated
         if (indirect_block == 0)
         {
-            return 0; // No indirect block allocated
+            return 0;
         }
 
-        // Read the indirect block from disk
         unsigned char block_buffer[SimpleDisk::BLOCK_SIZE];
         fs->disk->read(indirect_block, block_buffer);
-
-        // Get the block number from the indirect block
         unsigned int *block_ptrs = (unsigned int *)block_buffer;
         return block_ptrs[index - MAX_DIRECT_BLOCKS];
     }
 
-    // Index is out of range
     return 0;
 }
 
@@ -99,6 +94,9 @@ bool Inode::AllocateBlock(unsigned int index)
             unsigned char block_buffer[SimpleDisk::BLOCK_SIZE];
             memset(block_buffer, 0, SimpleDisk::BLOCK_SIZE);
             fs->disk->write(indirect_block, block_buffer);
+
+            // Mark the indirect block as used
+            fs->free_blocks[indirect_block] = 0;
         }
 
         // Read the indirect block from disk
@@ -166,28 +164,21 @@ void Inode::FreeBlocks()
 }
 
 /*--------------------------------------------------------------------------*/
-/* CLASS FileSystem */
-/*--------------------------------------------------------------------------*/
-
-/*--------------------------------------------------------------------------*/
-/* CONSTRUCTOR */
+/* FileSystem Implementation */
 /*--------------------------------------------------------------------------*/
 
 FileSystem::FileSystem()
 {
     Console::puts("In file system constructor.\n");
 
-    // Initialize the file system data structures
     disk = nullptr;
     size = 0;
-
-    // Allocate memory for the inodes array
     inodes = new Inode[MAX_INODES];
 
-    // Initialize the inodes
+    // Initialize inodes
     for (unsigned int i = 0; i < MAX_INODES; i++)
     {
-        inodes[i].id = -1; // Invalid ID
+        inodes[i].id = -1;
         inodes[i].is_valid = false;
         inodes[i].file_size = 0;
         for (unsigned int j = 0; j < Inode::MAX_DIRECT_BLOCKS; j++)
@@ -199,7 +190,6 @@ FileSystem::FileSystem()
         inodes[i].fs = this;
     }
 
-    // Free blocks will be allocated when we mount the file system
     free_blocks = nullptr;
 }
 
@@ -226,27 +216,78 @@ FileSystem::~FileSystem()
 
 bool FileSystem::Mount(SimpleDisk *_disk)
 {
-    Console::puts("mounting file system from disk\n");
-    /* Here you read the inode list and the free list into memory */
+    Console::puts("mounting file system\n");
+    /* Here you read the free block list and the inode list from the disk
+       and initialize the class variables */
 
     if (_disk == nullptr)
     {
+        Console::puts("Error: Disk is null\n");
         return false;
     }
 
-    disk = _disk;
-    size = disk->NaiveSize();
+    this->disk = _disk;
+    this->size = disk->NaiveSize(); // Use the correct method to get the disk size
+    unsigned int num_blocks = this->size / SimpleDisk::BLOCK_SIZE;
+    Console::puts("Mounting disk with ");
+    Console::puti(num_blocks);
+    Console::puts(" blocks\n");
 
-    // Calculate the number of blocks in our file system
-    unsigned int num_blocks = size / SimpleDisk::BLOCK_SIZE;
+    // Allocate memory for our system structures
+    this->inodes = new Inode[MAX_INODES];
+    this->free_blocks = new unsigned char[num_blocks];
 
-    // Allocate memory for the free blocks list
-    free_blocks = new unsigned char[num_blocks];
+    // Calculate the maximum number of inodes that can fit in a block
+    unsigned int inode_size = sizeof(Inode);
+    unsigned int max_inodes_per_block = SimpleDisk::BLOCK_SIZE / inode_size;
+    unsigned int safe_max_inodes = (max_inodes_per_block < MAX_INODES) ? max_inodes_per_block : MAX_INODES;
 
-    // Load the inodes and free block list from disk
-    LoadInodes();
-    LoadFreeList();
+    // Read the inode list from disk (block 0)
+    unsigned char block_buffer[SimpleDisk::BLOCK_SIZE];
+    this->disk->read(INODES_BLOCK, block_buffer);
 
+    // Copy only as many inodes as can fit in a block or MAX_INODES (whichever is smaller)
+    unsigned int inodes_to_copy = safe_max_inodes * sizeof(Inode);
+    if (inodes_to_copy > SimpleDisk::BLOCK_SIZE)
+    {
+        Console::puts("ERROR: Inode structure too large for disk block!\n");
+        delete[] this->inodes;
+        delete[] this->free_blocks;
+        return false;
+    }
+
+    memcpy(this->inodes, block_buffer, inodes_to_copy);
+
+    // Read the free block list from disk (block 1)
+    this->disk->read(FREELIST_BLOCK, block_buffer);
+
+    // Only copy as many blocks as we have or can fit in a block
+    unsigned int freelist_bytes = (num_blocks < SimpleDisk::BLOCK_SIZE) ? num_blocks : SimpleDisk::BLOCK_SIZE;
+    memcpy(this->free_blocks, block_buffer, freelist_bytes);
+
+    // Verify that the disk is formatted
+    bool is_formatted = false;
+    for (unsigned int i = 0; i < safe_max_inodes; i++)
+    {
+        if (this->inodes[i].id != -1 && this->inodes[i].is_valid)
+        {
+            is_formatted = true;
+            break;
+        }
+    }
+
+    if (!is_formatted)
+    {
+        Console::puts("WARNING: Disk appears to be unformatted or inode read failed\n");
+    }
+
+    // Set filesystem pointer for all inodes
+    for (unsigned int i = 0; i < MAX_INODES; i++)
+    {
+        inodes[i].fs = this;
+    }
+
+    Console::puts("mounting completed successfully\n");
     return true;
 }
 
@@ -259,18 +300,35 @@ bool FileSystem::Format(SimpleDisk *_disk, unsigned int _size)
 
     if (_disk == nullptr)
     {
+        Console::puts("Error: Disk is null\n");
         return false;
     }
 
     // Calculate the number of blocks in our file system
     unsigned int num_blocks = _size / SimpleDisk::BLOCK_SIZE;
+    Console::puts("Formatting with ");
+    Console::puti(num_blocks);
+    Console::puts(" blocks\n");
+
+    // Check if the Inode structure will fit in a single block
+    unsigned int inode_size = sizeof(Inode);
+    unsigned int max_inodes_per_block = SimpleDisk::BLOCK_SIZE / inode_size;
+
+    Console::puts("Inode size: ");
+    Console::puti(inode_size);
+    Console::puts(" bytes, max inodes per block: ");
+    Console::puti(max_inodes_per_block);
+    Console::puts("\n");
+
+    // Ensure MAX_INODES doesn't exceed what can fit in a block
+    unsigned int safe_max_inodes = (max_inodes_per_block < MAX_INODES) ? max_inodes_per_block : MAX_INODES;
 
     // Create temporary structures to initialize the disk
-    Inode *temp_inodes = new Inode[MAX_INODES];
+    Inode *temp_inodes = new Inode[safe_max_inodes];
     unsigned char *temp_free_blocks = new unsigned char[num_blocks];
 
     // Initialize all inodes to invalid
-    for (unsigned int i = 0; i < MAX_INODES; i++)
+    for (unsigned int i = 0; i < safe_max_inodes; i++)
     {
         temp_inodes[i].id = -1;
         temp_inodes[i].is_valid = false;
@@ -296,17 +354,34 @@ bool FileSystem::Format(SimpleDisk *_disk, unsigned int _size)
 
     // Write the inode list to disk (block 0)
     unsigned char block_buffer[SimpleDisk::BLOCK_SIZE];
-    memcpy(block_buffer, temp_inodes, sizeof(Inode) * MAX_INODES);
+    memset(block_buffer, 0, SimpleDisk::BLOCK_SIZE); // Clear the buffer first
+
+    // Only copy as many inodes as can fit in a block
+    unsigned int inodes_bytes = sizeof(Inode) * safe_max_inodes;
+    if (inodes_bytes > SimpleDisk::BLOCK_SIZE)
+    {
+        Console::puts("ERROR: Inode structure too large for disk block!\n");
+        delete[] temp_inodes;
+        delete[] temp_free_blocks;
+        return false;
+    }
+
+    memcpy(block_buffer, temp_inodes, inodes_bytes);
     _disk->write(INODES_BLOCK, block_buffer);
 
     // Write the free block list to disk (block 1)
-    memcpy(block_buffer, temp_free_blocks, num_blocks);
+    memset(block_buffer, 0, SimpleDisk::BLOCK_SIZE); // Clear the buffer first
+
+    // Make sure we don't exceed the block size for the free list
+    unsigned int freelist_bytes = (num_blocks < SimpleDisk::BLOCK_SIZE) ? num_blocks : SimpleDisk::BLOCK_SIZE;
+    memcpy(block_buffer, temp_free_blocks, freelist_bytes);
     _disk->write(FREELIST_BLOCK, block_buffer);
 
     // Clean up
     delete[] temp_inodes;
     delete[] temp_free_blocks;
 
+    Console::puts("formatting completed successfully\n");
     return true;
 }
 
@@ -431,8 +506,11 @@ short FileSystem::GetFreeInode()
 
 int FileSystem::GetFreeBlock()
 {
+    // Calculate number of blocks
+    unsigned int num_blocks = size / SimpleDisk::BLOCK_SIZE;
+
     // Start from the first data block (skip inode and free list blocks)
-    for (unsigned int i = FIRST_DATA_BLOCK; i < size / SimpleDisk::BLOCK_SIZE; i++)
+    for (unsigned int i = FIRST_DATA_BLOCK; i < num_blocks; i++)
     {
         if (free_blocks[i] == 1)
         { // If block is free
@@ -445,6 +523,7 @@ int FileSystem::GetFreeBlock()
 void FileSystem::SaveInodes()
 {
     unsigned char block_buffer[SimpleDisk::BLOCK_SIZE];
+    memset(block_buffer, 0, SimpleDisk::BLOCK_SIZE); // Clear the buffer first
     memcpy(block_buffer, inodes, sizeof(Inode) * MAX_INODES);
     disk->write(INODES_BLOCK, block_buffer);
 }
@@ -465,8 +544,12 @@ void FileSystem::LoadInodes()
 void FileSystem::SaveFreeList()
 {
     unsigned char block_buffer[SimpleDisk::BLOCK_SIZE];
+    memset(block_buffer, 0, SimpleDisk::BLOCK_SIZE); // Clear the buffer first
     unsigned int num_blocks = size / SimpleDisk::BLOCK_SIZE;
-    memcpy(block_buffer, free_blocks, num_blocks);
+
+    // Make sure we don't exceed the block size for the free list
+    unsigned int freelist_bytes = (num_blocks < SimpleDisk::BLOCK_SIZE) ? num_blocks : SimpleDisk::BLOCK_SIZE;
+    memcpy(block_buffer, free_blocks, freelist_bytes);
     disk->write(FREELIST_BLOCK, block_buffer);
 }
 
@@ -475,5 +558,8 @@ void FileSystem::LoadFreeList()
     unsigned char block_buffer[SimpleDisk::BLOCK_SIZE];
     disk->read(FREELIST_BLOCK, block_buffer);
     unsigned int num_blocks = size / SimpleDisk::BLOCK_SIZE;
-    memcpy(free_blocks, block_buffer, num_blocks);
+
+    // Make sure we don't exceed the block size for the free list
+    unsigned int freelist_bytes = (num_blocks < SimpleDisk::BLOCK_SIZE) ? num_blocks : SimpleDisk::BLOCK_SIZE;
+    memcpy(free_blocks, block_buffer, freelist_bytes);
 }

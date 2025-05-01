@@ -17,65 +17,69 @@
 /* DEFINES */
 /*--------------------------------------------------------------------------*/
 
-#define MB * (0x1 << 20)
-#define KB * (0x1 << 10)
+#define MB *(0x1 << 20)
+#define KB *(0x1 << 10)
 
 /*--------------------------------------------------------------------------*/
 /* INCLUDES */
 /*--------------------------------------------------------------------------*/
 
-#include "machine.H"         /* LOW-LEVEL STUFF   */
+#include "machine.H" /* LOW-LEVEL STUFF   */
 #include "console.H"
 #include "gdt.H"
-#include "idt.H"             /* EXCEPTION MGMT.   */
+#include "idt.H" /* EXCEPTION MGMT.   */
 #include "irq.H"
-#include "exceptions.H"     
+#include "exceptions.H"
 #include "interrupts.H"
 
 #include "assert.H"
 
-#include "simple_timer.H"    /* TIMER MANAGEMENT  */
+#include "simple_timer.H" /* TIMER MANAGEMENT  */
 
-#include "frame_pool.H"      /* MEMORY MANAGEMENT */
+#include "frame_pool.H" /* MEMORY MANAGEMENT */
 #include "mem_pool.H"
 
-#include "simple_disk.H"     /* DISK DEVICE */
+#include "simple_disk.H" /* DISK DEVICE */
 
-#include "file_system.H"     /* FILE SYSTEM */
+#include "file_system.H" /* FILE SYSTEM */
 #include "file.H"
+
+// Define size_t type
+typedef unsigned int size_t;
 
 /*--------------------------------------------------------------------------*/
 /* MEMORY MANAGEMENT */
 /*--------------------------------------------------------------------------*/
 
 /* -- A POOL OF FRAMES FOR THE SYSTEM TO USE */
-FramePool* SYSTEM_FRAME_POOL;
+FramePool *SYSTEM_FRAME_POOL;
 
 /* -- A POOL OF CONTIGUOUS MEMORY FOR THE SYSTEM TO USE */
-MemPool* MEMORY_POOL;
+MemPool *MEMORY_POOL;
 
-typedef unsigned int size_t;
-
-//replace the operator "new"
-void* operator new (size_t size) {
+// replace the operator "new"
+void *operator new(size_t size)
+{
 	unsigned long a = MEMORY_POOL->allocate((unsigned long)size);
-	return (void*)a;
+	return (void *)a;
 }
 
-//replace the operator "new[]"
-void* operator new[](size_t size) {
+// replace the operator "new[]"
+void *operator new[](size_t size)
+{
 	unsigned long a = MEMORY_POOL->allocate((unsigned long)size);
-	return (void*)a;
+	return (void *)a;
 }
 
-//replace the operator "delete"
-void operator delete (void* p, size_t s) {
+// replace the operator "delete"
+void operator delete(void *p, size_t s)
+{
 	MEMORY_POOL->release((unsigned long)p);
 }
 
-
-//replace the operator "delete[]"
-void operator delete[](void* p) {
+// replace the operator "delete[]"
+void operator delete[](void *p)
+{
 	MEMORY_POOL->release((unsigned long)p);
 }
 
@@ -84,8 +88,8 @@ void operator delete[](void* p) {
 /*--------------------------------------------------------------------------*/
 
 /* -- A POINTER TO THE SYSTEM DISK */
-IDEController* IDE_CONTROLLER;
-SimpleDisk* SYSTEM_DISK;
+IDEController *IDE_CONTROLLER;
+SimpleDisk *SYSTEM_DISK;
 
 #define SYSTEM_DISK_SIZE (10 MB)
 
@@ -94,99 +98,180 @@ SimpleDisk* SYSTEM_DISK;
 /*--------------------------------------------------------------------------*/
 
 /* -- A POINTER TO THE SYSTEM FILE SYSTEM */
-FileSystem* FILE_SYSTEM;
+FileSystem *FILE_SYSTEM;
 
 /*--------------------------------------------------------------------------*/
 /* CODE TO EXERCISE THE FILE SYSTEM */
 /*--------------------------------------------------------------------------*/
 
-void exercise_file_system(FileSystem* _file_system, unsigned int _iteration_no) {
+void exercise_file_system(FileSystem *_file_system, unsigned int _iteration_no)
+{
+	const char *STRING1 = "01234567890123456789";
+	const char *STRING2 = "abcdefghijabcdefghij";
 
-	const char* STRING1 = "01234567890123456789";
-	const char* STRING2 = "abcdefghijabcdefghij";
-
-	/* -- Create two files -- */
-
+	// Create test files
 	Console::puts("Creating File 1 and File 2\n");
-
 	assert(_file_system->CreateFile(1));
 	assert(_file_system->CreateFile(2));
 
-	/* -- "Open" the two files -- */
-
+	// Write test data
 	{
 		Console::puts("Opening File 1 and File 2\n");
-
 		File file1(_file_system, 1);
-
 		File file2(_file_system, 2);
 
 		Console::puts("Writing into File 1 and File 2\n");
-
-		/* -- Write into File 1 -- */
 		file1.Write(20, (_iteration_no % 2 == 0) ? STRING1 : STRING2);
-
-		/* -- Write into File 2 -- */
-
 		file2.Write(20, (_iteration_no % 2 == 0) ? STRING2 : STRING1);
-
-		/* -- Files will get automatically closed when we leave scope  -- */
-
 		Console::puts("Closing File 1 and File 2\n");
 	}
 
+	// Verify test data
 	{
-		/* -- "Open files again -- */
-
 		Console::puts("Opening File 1 and File 2 again\n");
-
 		File file1(_file_system, 1);
 		File file2(_file_system, 2);
 
-		/* -- Read from File 1 and check result -- */
-
 		Console::puts("Checking content of File 1 and File 2\n");
-
 		file1.Reset();
 		char result1[30];
 		assert(file1.Read(20, result1) == 20);
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 20; i++)
+		{
 			assert(result1[i] == ((_iteration_no % 2 == 0) ? STRING1[i] : STRING2[i]));
 		}
 
-		/* -- Read from File 2 and check result -- */
 		file2.Reset();
 		char result2[30];
 		assert(file2.Read(20, result2) == 20);
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 20; i++)
+		{
 			assert(result2[i] == ((_iteration_no % 2 == 0) ? STRING2[i] : STRING1[i]));
 		}
 		Console::puts("SUCCESS!!\n");
-
-		/* -- "Close" files again -- */
-
 		Console::puts("Closing File 1 and File 2 again\n");
 	}
 
-	/* -- Delete both files -- */
-
+	// Clean up test files
 	Console::puts("Deleting File 1 and File 2\n");
-
 	assert(_file_system->DeleteFile(1));
-
 	assert(_file_system->LookupFile(1) == nullptr);
-
 	assert(_file_system->DeleteFile(2));
-
 	assert(_file_system->LookupFile(2) == nullptr);
+
+	// Test large file support
+	if (_iteration_no % 2 == 0)
+	{
+		Console::puts("===================================\n");
+		Console::puts("*** TESTING LARGE FILE SUPPORT ***\n");
+		Console::puts("===================================\n");
+
+		Console::puts("Creating large file (id=3)...\n");
+		assert(_file_system->CreateFile(3));
+		File large_file(_file_system, 3);
+
+		// Write test pattern
+		Console::puts("Writing 5000 bytes to the large file...\n");
+		char write_buffer[5000];
+		for (int i = 0; i < 5000; i++)
+		{
+			write_buffer[i] = (char)((i % 26) + 'a');
+		}
+
+		int bytes_written = large_file.Write(5000, write_buffer);
+		Console::puts("Wrote ");
+		Console::puti(bytes_written);
+		Console::puts(" bytes to the large file\n");
+
+		// Verify data
+		Console::puts("Closing and reopening large file\n");
+		File reopen_file(_file_system, 3);
+		reopen_file.Reset();
+
+		Console::puts("Reading back large file data in 512-byte chunks...\n");
+		char read_buffer[512];
+		char display_char[2];
+		display_char[1] = '\0';
+		int total_read = 0;
+		int read_chunk;
+		int chunks = 0;
+
+		do
+		{
+			read_chunk = reopen_file.Read(512, read_buffer);
+			if (read_chunk > 0)
+			{
+				chunks++;
+				total_read += read_chunk;
+
+				// Calculate the expected values
+				char first_expected = (char)((total_read - read_chunk) % 26 + 'a');
+				char last_expected = (char)((total_read - 1) % 26 + 'a');
+
+				Console::puts("Chunk ");
+				Console::puti(chunks);
+				Console::puts(": ");
+				Console::puti(read_chunk);
+				Console::puts(" bytes (");
+
+				// Display first character
+				display_char[0] = read_buffer[0];
+				Console::puts(display_char);
+
+				Console::puts("...");
+
+				// Display last character
+				display_char[0] = read_buffer[read_chunk - 1];
+				Console::puts(display_char);
+
+				Console::puts(")\n");
+
+				// Debug output
+				Console::puts("Expected first: ");
+				display_char[0] = first_expected;
+				Console::puts(display_char);
+				Console::puts(", Got: ");
+				display_char[0] = read_buffer[0];
+				Console::puts(display_char);
+				Console::puts("\n");
+
+				// Verify a few bytes
+				if (read_buffer[0] != first_expected)
+				{
+					Console::puts("*** MISMATCH between expected and actual character at beginning of chunk ***\n");
+					Console::puts("Total read so far: ");
+					Console::puti(total_read);
+					Console::puts(", Chunk size: ");
+					Console::puti(read_chunk);
+					Console::puts("\n");
+				}
+				assert(read_buffer[0] == first_expected);
+				assert(read_buffer[read_chunk - 1] == last_expected);
+			}
+		} while (read_chunk > 0);
+
+		Console::puts("Successfully read ");
+		Console::puti(total_read);
+		Console::puts(" bytes in ");
+		Console::puti(chunks);
+		Console::puts(" chunks\n");
+
+		Console::puts("Large file test PASSED!\n");
+
+		// Delete the large file
+		Console::puts("Deleting the large file...\n");
+		assert(_file_system->DeleteFile(3));
+		assert(_file_system->LookupFile(3) == nullptr);
+		Console::puts("===================================\n");
+	}
 }
 
 /*--------------------------------------------------------------------------*/
 /* MAIN ENTRY INTO THE OS */
 /*--------------------------------------------------------------------------*/
 
-int main() {
-
+int main()
+{
 	GDT::init();
 	Console::init();
 	IDT::init();
@@ -198,11 +283,14 @@ int main() {
 
 	/* -- EXAMPLE OF AN EXCEPTION HANDLER -- */
 
-	class DBZ_Handler : public ExceptionHandler {
+	class DBZ_Handler : public ExceptionHandler
+	{
 	public:
-		virtual void handle_exception(REGS* _regs) {
+		virtual void handle_exception(REGS *_regs)
+		{
 			Console::puts("DIVISION BY ZERO!\n");
-			for (;;);
+			for (;;)
+				;
 		}
 	} dbz_handler;
 
@@ -213,7 +301,7 @@ int main() {
 	/*    NOTE2: This is not an exercise in memory management. The implementation
 				of the memory management is accordingly *very* primitive! */
 
-				/* ---- Initialize a frame pool; details are in its implementation */
+	/* ---- Initialize a frame pool; details are in its implementation */
 	FramePool system_frame_pool;
 	SYSTEM_FRAME_POOL = &system_frame_pool;
 
@@ -237,9 +325,11 @@ int main() {
 
 	SYSTEM_DISK = new SimpleDisk(IDE_CONTROLLER, SYSTEM_DISK_SIZE);
 
-	class Disk_Silencer : public InterruptHandler {
+	class Disk_Silencer : public InterruptHandler
+	{
 	public:
-		virtual void handle_interrupt(REGS* _regs) {
+		virtual void handle_interrupt(REGS *_regs)
+		{
 			// Do nothing. We just want to shut up the system complaining about disk interrupts.
 		}
 	} disk_silencer;
@@ -255,7 +345,7 @@ int main() {
 			 It is important to install a timer handler, as we
 			 would get a lot of uncaptured interrupts otherwise. */
 
-			 /* -- ENABLE INTERRUPTS -- */
+	/* -- ENABLE INTERRUPTS -- */
 
 	Machine::enable_interrupts();
 
@@ -265,24 +355,42 @@ int main() {
 
 	/* -- HERE WE STRESS TEST THE FILE SYSTEM -- */
 
-	Console::puts("before formatting...");
-	assert(FileSystem::Format(SYSTEM_DISK, (1 MB))); // Don't try this at home!
-	Console::puts("formatting completed\n");
+	Console::puts("Before formatting the disk...\n");
 
-	Console::puts("before mounting...");
-	assert(FILE_SYSTEM->Mount(SYSTEM_DISK)); // 'connect' disk to file system.
-	Console::puts("mounting completed\n");
+	if (!FileSystem::Format(SYSTEM_DISK, (1 MB)))
+	{
+		Console::puts("Error: Formatting failed!\n");
+		assert(false);
+	}
 
-	for (int j = 0; j < 30; j++) {
-		Console::puts("exercise file system; iteration "); Console::puti(j); Console::puts("...\n");
+	Console::puts("Formatting completed\n");
+
+	Console::puts("Before mounting the file system...\n");
+
+	if (!FILE_SYSTEM->Mount(SYSTEM_DISK))
+	{
+		Console::puts("Error: Mounting failed!\n");
+		assert(false);
+	}
+
+	Console::puts("Mounting completed\n");
+
+	// Run fewer iterations so we can see the large file test
+	for (int j = 0; j < 30; j++)
+	{
+		Console::puts("===========================================\n");
+		Console::puts("Exercise file system; iteration ");
+		Console::puti(j);
+		Console::puts("...\n");
+		Console::puts("===========================================\n");
 		exercise_file_system(FILE_SYSTEM, j);
-		Console::puts("iteration done\n");
+		Console::puts("Iteration done\n");
 	}
 
 	Console::puts("EXCELLENT! Your File system seems to work correctly. Congratulations!!\n");
-	/* -- AND ALL THE REST SHOULD FOLLOW ... */
 
-	assert(false); /* WE SHOULD NEVER REACH THIS POINT. */
+	/* -- WE SHOULD NEVER REACH THIS POINT. */
+	assert(false);
 
 	/* -- WE DO THE FOLLOWING TO KEEP THE COMPILER HAPPY. */
 	return 1;

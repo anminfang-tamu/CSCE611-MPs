@@ -1,0 +1,1299 @@
+Darwin
+qemu-system-x86_64 -kernel kernel.bin -serial stdio \
+-device piix3-ide,id=ide -drive id=disk,file=c.img,format=raw,if=none -device ide-hd,drive=disk,bus=ide.0
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+Installed exception handler at ISR <0>
+Allocating Memory Pool... done
+Installed interrupt handler at IRQ <0>
+Installed interrupt handler at IRQ <14>
+In file system constructor.
+Hello World!
+before formatting...formatting disk
+E

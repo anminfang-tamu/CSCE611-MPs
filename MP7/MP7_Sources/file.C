@@ -30,12 +30,11 @@ File::File(FileSystem *_fs, int _id)
 {
     Console::puts("Opening file.\n");
 
-    // Initialize file data
     fs = _fs;
     current_position = 0;
     current_block = 0;
 
-    // Find the inode for this file
+    // Get file inode
     inode = fs->LookupFile(_id);
     if (inode == nullptr)
     {
@@ -43,23 +42,27 @@ File::File(FileSystem *_fs, int _id)
         assert(false);
     }
 
-    // Load the first block into the cache (if file has any blocks)
-    if (inode->GetBlockNo(0) != 0)
+    // Load first block if exists
+    unsigned int first_block_no = inode->GetBlockNo(0);
+    if (first_block_no != 0)
     {
-        fs->disk->read(inode->GetBlockNo(0), block_cache);
+        fs->disk->read(first_block_no, block_cache);
+    }
+    else
+    {
+        memset(block_cache, 0, SimpleDisk::BLOCK_SIZE);
     }
 }
 
 File::~File()
 {
     Console::puts("Closing file.\n");
-    /* Make sure that you write any cached data to disk. */
-    /* Also make sure that the inode in the inode list is updated. */
 
-    // Only write the current block if it has been allocated
-    if (inode->GetBlockNo(current_block) != 0)
+    // Write cached block if allocated
+    unsigned int current_block_no = inode->GetBlockNo(current_block);
+    if (current_block_no != 0)
     {
-        fs->disk->write(inode->GetBlockNo(current_block), block_cache);
+        fs->disk->write(current_block_no, block_cache);
     }
 }
 
@@ -97,22 +100,27 @@ int File::Read(unsigned int _n, char *_buf)
         if (block_index != current_block)
         {
             // Write the current block back to disk if it has been modified
-            if (inode->GetBlockNo(current_block) != 0)
+            unsigned int current_block_no = inode->GetBlockNo(current_block);
+            if (current_block_no != 0)
             {
-                fs->disk->write(inode->GetBlockNo(current_block), block_cache);
+                fs->disk->write(current_block_no, block_cache);
             }
 
             // Load the new block
             current_block = block_index;
-            if (inode->GetBlockNo(current_block) != 0)
+            unsigned int new_block_no = inode->GetBlockNo(current_block);
+
+            if (new_block_no != 0)
             {
-                fs->disk->read(inode->GetBlockNo(current_block), block_cache);
+                // Load the block from disk
+                fs->disk->read(new_block_no, block_cache);
             }
             else
             {
                 // This block hasn't been allocated, which shouldn't happen during reading
-                // but let's handle it anyway
+                Console::puts("Warning: Trying to read from non-allocated block\n");
                 memset(block_cache, 0, SimpleDisk::BLOCK_SIZE);
+                return bytes_read; // Return what we've read so far
             }
         }
 
@@ -165,16 +173,21 @@ int File::Write(unsigned int _n, const char *_buf)
         if (block_index != current_block)
         {
             // Write the current block back to disk if it has been modified
-            if (inode->GetBlockNo(current_block) != 0)
+            unsigned int current_block_no = inode->GetBlockNo(current_block);
+            if (current_block_no != 0)
             {
-                fs->disk->write(inode->GetBlockNo(current_block), block_cache);
+                fs->disk->write(current_block_no, block_cache);
             }
 
-            // Load the new block or allocate it if it doesn't exist
+            // Update our current block tracker
             current_block = block_index;
-            if (inode->GetBlockNo(current_block) != 0)
+
+            // Check if the new block exists
+            unsigned int new_block_no = inode->GetBlockNo(current_block);
+            if (new_block_no != 0)
             {
-                fs->disk->read(inode->GetBlockNo(current_block), block_cache);
+                // Block exists, read it in
+                fs->disk->read(new_block_no, block_cache);
             }
             else
             {
@@ -182,8 +195,18 @@ int File::Write(unsigned int _n, const char *_buf)
                 if (!inode->AllocateBlock(current_block))
                 {
                     // If we couldn't allocate a block, stop writing
+                    Console::puts("Failed to allocate new block when writing\n");
                     break;
                 }
+
+                // Get the new block number after allocation
+                new_block_no = inode->GetBlockNo(current_block);
+                if (new_block_no == 0)
+                {
+                    Console::puts("Block allocation error: block number still 0\n");
+                    break;
+                }
+
                 // Clear the new block
                 memset(block_cache, 0, SimpleDisk::BLOCK_SIZE);
             }
@@ -211,6 +234,13 @@ int File::Write(unsigned int _n, const char *_buf)
         inode->file_size = current_position;
     }
 
+    // Make sure to write the last block before returning
+    unsigned int last_block_no = inode->GetBlockNo(current_block);
+    if (last_block_no != 0)
+    {
+        fs->disk->write(last_block_no, block_cache);
+    }
+
     return bytes_written;
 }
 
@@ -219,9 +249,10 @@ void File::Reset()
     Console::puts("resetting file\n");
 
     // Check if we need to write the current block back to disk
-    if (current_block != 0 && inode->GetBlockNo(current_block) != 0)
+    unsigned int current_block_no = inode->GetBlockNo(current_block);
+    if (current_block_no != 0)
     {
-        fs->disk->write(inode->GetBlockNo(current_block), block_cache);
+        fs->disk->write(current_block_no, block_cache);
     }
 
     // Set the current position to the beginning of the file
@@ -229,12 +260,14 @@ void File::Reset()
     current_block = 0;
 
     // Load the first block into the cache (if file has any blocks)
-    if (inode->GetBlockNo(0) != 0)
+    unsigned int first_block_no = inode->GetBlockNo(0);
+    if (first_block_no != 0)
     {
-        fs->disk->read(inode->GetBlockNo(0), block_cache);
+        fs->disk->read(first_block_no, block_cache);
     }
     else
     {
+        // Clear the cache for empty files
         memset(block_cache, 0, SimpleDisk::BLOCK_SIZE);
     }
 }
